@@ -93,3 +93,7 @@
 * インフラ: Docker、Render
 * 認証: Devise、Google認証
 * 使用予定Gem: Devise, Omniauth
+
+## 画面遷移図
+
+[Figmaで見る](https://www.figma.com/design/YhWvCaj8tBoJYKhm43fk2L/%E7%84%A1%E9%A1%8C?node-id=1-76&t=HSSDe57bOePoMQmq-1)
