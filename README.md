@@ -97,3 +97,8 @@
 ## 画面遷移図
 
 [Figmaで見る](https://www.figma.com/design/YhWvCaj8tBoJYKhm43fk2L/%E7%84%A1%E9%A1%8C?node-id=1-76&t=HSSDe57bOePoMQmq-1)
+
+
+## ER図
+![ER図](db_tabi_shiori.svg)
+- 詳細は、[dbdiagramファイル](dbdiagram)で確認できます
