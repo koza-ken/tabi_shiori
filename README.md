@@ -1,4 +1,4 @@
-# 旅行計画アプリ「tabi_shiori（仮）」
+# RakuCi（ラクシィ）
 
 ## サービス概要
 
@@ -101,5 +101,5 @@
 
 
 ## ER図
-![ER図](db_tabi_shiori.svg)
+![ER図](db_rakuci.svg)
 - 詳細は、[dbdiagramファイル](dbdiagram)で確認できます
