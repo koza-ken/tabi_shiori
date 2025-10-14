@@ -3,50 +3,50 @@
 
   <main class="flex flex-col items-center justify-center px-8 py-12">
     <%# <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8"> %>
-      <h2 class="text-2xl font-bold text-text text-center mb-8">新規登録</h2>
+      <h2 class="text-2xl font-bold text-text text-center mb-8"><%= t('.title') %></h2>
 
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
         <!-- メールアドレス -->
         <div class="mb-6">
-          <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-text mb-2" %>
+          <%= f.label :email, t('.email'), class: "block text-sm font-medium text-text mb-2" %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email",
               class: "w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" %>
         </div>
 
         <!-- パスワード -->
         <div class="mb-6">
-          <%= f.label :password, "パスワード", class: "block text-sm font-medium text-text mb-2" %>
+          <%= f.label :password, t('.password'), class: "block text-sm font-medium text-text mb-2" %>
           <%= f.password_field :password, autocomplete: "new-password",
               class: "w-full px-4 py-2 bg-white  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" %>
           <% if @minimum_password_length %>
-            <span class="text-xs text-gray-400">半角英数字<%= @minimum_password_length %>文字以上</span>
+            <span class="text-xs text-gray-400"><%= t('.password_hint', count: @minimum_password_length) %></span>
           <% end %>
         </div>
 
         <!-- パスワード確認 -->
         <div class="mb-6">
-          <%= f.label :password_confirmation, "パスワード（確認）", class: "block text-sm font-medium text-text mb-2" %>
+          <%= f.label :password_confirmation, t('.password_confirmation'), class: "block text-sm font-medium text-text mb-2" %>
           <%= f.password_field :password_confirmation, autocomplete: "new-password",
               class: "w-full px-4 py-2 bg-white  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" %>
         </div>
 
         <!-- 利用規約とプライバシーポリシーへの同意 -->
         <div class="mb-6 text-sm text-text text-center">
-          <%= link_to "利用規約", "#", class: "text-primary font-bold underline hover:opacity-80" %>と<%= link_to "プライバシーポリシー", "#", class: "text-primary font-bold underline hover:opacity-80" %><br>
-          に同意のうえ、ご登録をお願いします
+          <%= link_to t('.terms_of_service'), "#", class: "text-primary font-bold underline hover:opacity-80" %>と<%= link_to t('.privacy_policy'), "#", class: "text-primary font-bold underline hover:opacity-80" %><br>
+          <%= t('.terms_agreement') %>
         </div>
 
         <!-- 登録ボタン -->
         <div class="mb-6">
-          <%= f.submit "登録する", class: "w-full px-8 py-3 bg-main-button text-white font-semibold rounded-lg hover:opacity-90 transition cursor-pointer" %>
+          <%= f.submit t('.sign_up'), class: "w-full px-8 py-3 bg-main-button text-white font-semibold rounded-lg hover:opacity-90 transition cursor-pointer" %>
         </div>
       <% end %>
 
       <!-- ログインページへのボタン -->
       <div class="text-center">
-        <%= link_to "（仮）ログインページへ", new_session_path(resource_name), class: "inline-block px-8 py-3 bg-white border-2 border-gray-300 text-text font-semibold rounded-lg hover:bg-gray-50 transition" %>
+        <%= link_to t('.sign_in'), new_session_path(resource_name), class: "inline-block px-8 py-3 bg-white border-2 border-gray-300 text-text font-semibold rounded-lg hover:bg-gray-50 transition" %>
       </div>
     <%# </div> %>
   </main>
