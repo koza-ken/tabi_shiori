@@ -7,3 +7,10 @@
   --color-main-bg: #F8FFFE;
   --color-main-button: #239C94;
 }
+
+@layer components {
+  .btn-main {
+    @apply w-full px-8 py-3 bg-main-button text-white font-semibold rounded-lg hover:opacity-80 transition cursor-pointer;
+  }
+  
+}
