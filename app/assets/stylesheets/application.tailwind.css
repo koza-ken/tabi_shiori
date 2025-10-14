@@ -7,3 +7,17 @@
   --color-main-bg: #F8FFFE;
   --color-main-button: #239C94;
 }
+
+body {
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+@layer components {
+  .btn-main {
+    @apply w-full px-8 py-3 bg-main-button text-white font-semibold rounded-lg hover:opacity-80 transition cursor-pointer;
+  }
+
+  .btn-sub {
+    @apply px-8 py-3 bg-white border-2 border-gray-300 text-text font-semibold rounded-lg hover:bg-gray-50 transition
+  }
+}
