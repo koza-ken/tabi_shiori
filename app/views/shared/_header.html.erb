@@ -1,8 +1,11 @@
 <header class="flex items-center justify-between px-6 py-4 border-b-3 bg-bg border-primary">
   <h1 class="text-3xl font-bold text-primary">RakuCi</h1>
-  <button class="text-primary">
-    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <button class="text-primary" data-action="click->hamburger#toggle">
+    <svg class="size-10" data-hamburger-target="hamburger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+    <svg class="size-10 hidden" data-hamburger-target="close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
     </svg>
   </button>
 </header>

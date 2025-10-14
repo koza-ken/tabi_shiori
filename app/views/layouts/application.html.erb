@@ -15,11 +15,15 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
-    <%# <main class="container mx-auto flex"> %>
+  <body data-controller="hamburger">
+    <%= render "shared/header" %>
+
+    <div class="relative min-h-screen">
       <%= yield %>
-    <%# </main> %>
+      <%= render "shared/hamburger_menu" %>
+    </div>
   </body>
 </html>

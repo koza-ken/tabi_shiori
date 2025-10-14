@@ -1,8 +1,7 @@
 // Import and register all your controllers
-import { application } from "./application"
+import { application } from "./application";
 
 // Manually import controllers (add more as needed)
-import HelloController from "./hello_controller"
-
+import HamburgerController from "./hamburger_controller";
 // Register controllers
-application.register("hello", HelloController)
+application.register("hamburger", HamburgerController);
