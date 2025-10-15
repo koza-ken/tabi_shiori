@@ -28,10 +28,10 @@ Table groups {
   created_by_user_id int [not null, ref: > users.id, note: "グループ作成者"]
   name varchar(30) [not null]
   invite_token varchar(64) [not null, unique, note: "招待リンク用トークン"]
-  schedule_name varchar(50) [note: "しおり名"]
+  trip_name varchar(50) [note: "しおり名"]
   start_date date [note: "旅行開始日"]
   end_date date [note: "旅行終了日"]
-  schedule_memo text [note: "しおり全体のメモ"]
+  trip_memo text [note: "しおり全体のメモ"]
   created_at timestamp [not null]
   updated_at timestamp [not null]
 
@@ -323,4 +323,3 @@ Table settlements {
   }
 
 }
-
