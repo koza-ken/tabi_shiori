@@ -1,1 +1,18 @@
-<h1>index</h1>
+<main class="flex flex-col items-center justify-center px-8 py-12">
+  <h1><%= t('.title') %></h1>
+  <div class="w-full text-center space-y-4 mt-8">
+    <% @cards.each do |card| %>
+      <div class="card-index">
+        <%= card.name %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 右下の+ボタン（新規作成ページへのリンク） -->
+  <div class="fixed bottom-10 right-10 z-50">
+    <%= link_to new_card_path, class: "bg-main-button hover:opacity-80 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center relative" do %>
+      <span class="block w-6 h-[3px] bg-bg rounded absolute rotate-45"></span>
+      <span class="block w-6 h-[3px] bg-bg rounded absolute -rotate-45"></span>
+    <% end %>
+  </div>
+</main>
