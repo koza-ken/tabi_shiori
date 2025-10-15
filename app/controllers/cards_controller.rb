@@ -22,6 +22,6 @@ class CardsController < ApplicationController
 
   # ストロングパラメータ
   def card_params
-    params.require(:card).permit(:name, :memo )
+    params.require(:card).permit(:name, :memo)
   end
 end
