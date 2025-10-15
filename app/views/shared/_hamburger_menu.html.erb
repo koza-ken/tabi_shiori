@@ -3,7 +3,7 @@
 
 
 <!-- メニューパネル（ログイン状態で判定） -->
-<nav class="absolute top-0 right-0 h-screen w-64 bg-white shadow-lg z-50 hidden" data-hamburger-target="menu">
+<nav class="absolute top-0 right-0 h-screen w-64 bg-white shadow-lg z-50 transition-transform duration-300 translate-x-full" data-hamburger-target="menu">
   <% if user_signed_in? %>
     <!-- ログイン後のメニュー -->
     <div class="px-6 py-6">

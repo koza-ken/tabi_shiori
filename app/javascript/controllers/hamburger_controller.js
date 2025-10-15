@@ -6,6 +6,6 @@ export default class extends Controller {
   toggle() {
     this.hamburgerTarget.classList.toggle("open");
     this.overlayTarget.classList.toggle("hidden");
-    this.menuTarget.classList.toggle("hidden");
+    this.menuTarget.classList.toggle("translate-x-full");
   }
 }
