@@ -1,0 +1,47 @@
+ja:
+  cards:
+    index:
+      title: カード一覧
+      new_card: 新規作成
+      no_cards: まだカードがありません
+
+    new:
+      title: 新しいカードを作成
+
+    edit:
+      title: カードを編集
+
+    show:
+      title: カード詳細
+      edit: 編集
+      delete: 削除
+      back: 一覧に戻る
+
+    form:
+      name: タイトル（目的地）
+      name_placeholder: 例：北海道旅行
+      memo: メモ
+      memo_placeholder: 旅行のメモや行きたい場所を自由に書いてください
+      submit: 作成する
+      update: 更新する
+      cancel: キャンセル
+
+    messages:
+      created: カードを作成しました
+      updated: カードを更新しました
+      deleted: カードを削除しました
+      create_failed: カードの作成に失敗しました
+      update_failed: カードの更新に失敗しました
+      delete_failed: カードの削除に失敗しました
+
+  activerecord:
+    models:
+      card: カード
+    attributes:
+      card:
+        name: カード名（目的地）
+        memo: メモ
+        user: ユーザー
+        group: グループ
+        created_at: 作成日時
+        updated_at: 更新日時
