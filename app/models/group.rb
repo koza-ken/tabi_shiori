@@ -1,5 +1,6 @@
 class Group < ApplicationRecord
   belongs_to :creator, class_name: "User", foreign_key: "created_by_user_id", inverse_of: :created_groups
+  has_many :cards
   validates :created_by_user_id, presence: true
   validates :name, presence: true, length: { maximum: 30 }
   validates :invite_token, presence: true, length: { maximum: 64 }, uniqueness: true
