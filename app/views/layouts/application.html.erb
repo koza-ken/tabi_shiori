@@ -21,7 +21,7 @@
   <body data-controller="hamburger">
     <%= render "shared/header" %>
 
-    <div class="relative min-h-screen bg-main-bg">
+    <div class="relative min-h-screen bg-main-bg overflow-hidden">
       <%= yield %>
       <%= render "shared/hamburger_menu" %>
     </div>
