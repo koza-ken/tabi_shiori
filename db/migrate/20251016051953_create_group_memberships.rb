@@ -4,7 +4,7 @@ class CreateGroupMemberships < ActiveRecord::Migration[7.2]
       t.references :user, foreign_key: true
       t.references :group, null: false, foreign_key: true
       t.string :group_nickname, limit: 20
-      t.integer :role, default: 0, null: false
+      t.string :role, default: "member", null: false
       t.string :guest_token, limit: 64
       t.timestamps
     end
