@@ -34,14 +34,70 @@ ja:
       update_failed: カードの更新に失敗しました
       delete_failed: カードの削除に失敗しました
 
+  groups:
+    index:
+      title: グループ一覧
+      new_group: 新規作成
+      no_groups: まだグループがありません
+      created_groups: 作成したグループ
+      joined_groups: 参加しているグループ
+
+    new:
+      title: 新しいグループを作成
+
+    edit:
+      title: グループを編集
+
+    show:
+      title: グループ詳細
+      edit: 編集
+      delete: 削除
+      back: 一覧に戻る
+      invite_link: 招待リンク
+      copy_link: リンクをコピー
+      members: メンバー
+
+    form:
+      name: グループ名
+      name_placeholder: 例：家族旅行
+      trip_name: 旅行名
+      trip_name_placeholder: 例：沖縄旅行2025
+      start_date: 開始日
+      end_date: 終了日
+      trip_memo: 旅行メモ
+      trip_memo_placeholder: 旅行の詳細や行きたい場所を自由に書いてください
+      submit: 作成する
+      update: 更新する
+      cancel: キャンセル
+
+    messages:
+      created: グループを作成しました
+      updated: グループを更新しました
+      deleted: グループを削除しました
+      create_failed: グループの作成に失敗しました
+      update_failed: グループの更新に失敗しました
+      delete_failed: グループの削除に失敗しました
+      link_copied: 招待リンクをコピーしました
+
   activerecord:
     models:
       card: カード
+      group: グループ
     attributes:
       card:
         name: カード名（目的地）
         memo: メモ
         user: ユーザー
         group: グループ
+        created_at: 作成日時
+        updated_at: 更新日時
+      group:
+        name: グループ名
+        trip_name: 旅行名
+        start_date: 開始日
+        end_date: 終了日
+        trip_memo: 旅行メモ
+        invite_token: 招待トークン
+        created_by_user_id: 作成者
         created_at: 作成日時
         updated_at: 更新日時
