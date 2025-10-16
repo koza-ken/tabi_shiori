@@ -8,10 +8,9 @@ class Card < ApplicationRecord
 
   private
 
-  # エラーは出ることはないけど念のためのバリデーション
   def must_belong_to_user_or_group
     # どちらも無い場合
-    if user_id.nil? && group_id.nil?
+    if user_id.blank? && group_id.blank?
       errors.add(:base, "ユーザーまたはグループのどちらかに紐づけてください")
     end
     # 両方ある場合
