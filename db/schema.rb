@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_15_093819) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_16_051953) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_15_093819) do
     t.index ["group_id"], name: "index_cards_on_group_id"
     t.index ["user_id"], name: "index_cards_on_user_id"
     t.check_constraint "user_id IS NOT NULL AND group_id IS NULL OR user_id IS NULL AND group_id IS NOT NULL", name: "cards_must_belong_to_user_or_group"
+  end
+
+  create_table "group_memberships", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "group_id", null: false
+    t.string "group_nickname", limit: 20
+    t.string "role", default: "member", null: false
+    t.string "guest_token", limit: 64
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "group_nickname"], name: "index_group_memberships_on_group_id_and_group_nickname", unique: true
+    t.index ["group_id"], name: "index_group_memberships_on_group_id"
+    t.index ["guest_token"], name: "index_group_memberships_on_guest_token"
+    t.index ["user_id", "group_id"], name: "index_group_memberships_on_user_id_and_group_id", unique: true
+    t.index ["user_id"], name: "index_group_memberships_on_user_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -59,5 +74,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_15_093819) do
 
   add_foreign_key "cards", "groups"
   add_foreign_key "cards", "users"
+  add_foreign_key "group_memberships", "groups"
+  add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users", column: "created_by_user_id"
 end
