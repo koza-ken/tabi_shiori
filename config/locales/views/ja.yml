@@ -66,6 +66,8 @@ ja:
       end_date: 終了日
       trip_memo: 旅行メモ
       trip_memo_placeholder: 旅行の詳細や行きたい場所を自由に書いてください
+      group_nickname: グループ内での名前
+      group_nickname_placeholder: 例：太郎
       submit: 作成する
       update: 更新する
       cancel: キャンセル
@@ -83,6 +85,7 @@ ja:
     models:
       card: カード
       group: グループ
+      group_membership: グループメンバーシップ
     attributes:
       card:
         name: カード名（目的地）
@@ -99,5 +102,13 @@ ja:
         trip_memo: 旅行メモ
         invite_token: 招待トークン
         created_by_user_id: 作成者
+        created_at: 作成日時
+        updated_at: 更新日時
+      group_membership:
+        group_nickname: グループ内での名前
+        role: 役割
+        guest_token: ゲストトークン
+        user: ユーザー
+        group: グループ
         created_at: 作成日時
         updated_at: 更新日時
