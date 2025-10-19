@@ -1,12 +1,20 @@
 <main class="flex flex-col items-center justify-center px-8 py-12">
   <h1><%= t('.title') %></h1>
-  <div class="w-full text-center space-y-4 mt-8">
-
+  <% if @groups.any? %>
+    <div class="w-full text-center space-y-4 mt-8">
+      <% @groups.each do |group| %>
+        <div class="card-index">
+          <%= group.name %>
+        </div>
+      <% end %>
+  <% else %>
+    <p class="text-gray-500"><%= t('groups.index.no_groups') %></p>
+  <% end %>
   </div>
 
   <!-- 右下の+ボタン（新規作成ページへのリンク） -->
   <div class="fixed bottom-10 right-10 z-50">
-    <%= link_to new_card_path, class: "bg-main-button hover:opacity-80 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center relative" do %>
+    <%= link_to new_group_path, class: "bg-main-button hover:opacity-80 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center relative" do %>
       <span class="block w-6 h-[3px] bg-bg rounded absolute rotate-45"></span>
       <span class="block w-6 h-[3px] bg-bg rounded absolute -rotate-45"></span>
     <% end %>

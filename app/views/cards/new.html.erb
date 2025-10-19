@@ -21,7 +21,7 @@
       <%= f.label :name, t('cards.form.name'), class: "block text-sm font-medium text-text mb-2" %>
       <%= f.text_field :name,
           placeholder: t('cards.form.name_placeholder'),
-          class: "w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" %>
+          class: "form-text-field" %>
     </div>
 
     <!-- メモ -->
@@ -30,7 +30,7 @@
       <%= f.text_area :memo,
           rows: 5,
           placeholder: t('cards.form.memo_placeholder'),
-          class: "w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical" %>
+          class: "form-text-field resize-vertical" %>
     </div>
 
     <!-- ボタン -->
