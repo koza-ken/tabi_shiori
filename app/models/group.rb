@@ -24,6 +24,8 @@
 #  fk_rails_...  (created_by_user_id => users.id)
 #
 class Group < ApplicationRecord
+  # コールバック（招待用のトークン設定）
+  before_validation :generate_invite_token, on: :create
   belongs_to :creator, class_name: "User", foreign_key: "created_by_user_id", inverse_of: :created_groups
   has_many :cards, dependent: :destroy
   has_many :group_memberships, dependent: :destroy
@@ -44,5 +46,10 @@ class Group < ApplicationRecord
     if end_date < start_date
       errors.add(:end_date, "は開始日より後の日付を設定してください")
     end
+  end
+
+  # 招待用トークンの生成
+  def generate_invite_token
+    self.invite_token ||= SecureRandom.urlsafe_base64(48)
   end
 end
