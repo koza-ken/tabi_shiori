@@ -40,5 +40,4 @@ class GroupCreateForm
   rescue ActiveRecord::RecordInvalid
     false
   end
-
 end

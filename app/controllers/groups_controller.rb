@@ -26,5 +26,4 @@ class GroupsController < ApplicationController
   def group_form_params
     params.require(:group_create_form).permit(:name, :trip_name, :start_date, :end_date, :group_nickname)
   end
-
 end
