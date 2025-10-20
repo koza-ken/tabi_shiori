@@ -17,7 +17,7 @@ class GroupsController < ApplicationController
       @group = @form.group  # フォームオブジェクトから作成されたグループを取得
       respond_to do |format|
         format.turbo_stream
-        format.html {redirect_to groups_path, notice: "グループが作成されました"}
+        format.html { redirect_to groups_path, notice: "グループが作成されました" }
       end
     else
       render :new, status: :unprocessable_entity
