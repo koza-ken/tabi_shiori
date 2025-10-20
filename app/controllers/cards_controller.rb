@@ -12,7 +12,11 @@ class CardsController < ApplicationController
   def create
     @card = current_user.cards.build(card_params)
     if @card.save
-      redirect_to cards_path, notice: "カードが作成されました"
+      respond_to do |format|
+        # create.turbo_stream.erbをレンダリング
+        format.turbo_stream
+        format.html { redirect_to cards_path, notice: "カードが作成されました" }
+      end
     else
       render :new, status: :unprocessable_entity
     end
