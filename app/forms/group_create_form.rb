@@ -4,6 +4,8 @@ class GroupCreateForm
 
   # フォームオブジェクトのインスタンスにuser属性を持たせる（コントローラからcurrent_userを渡している）
   attr_accessor :user
+  # 作成されたグループを外部から参照できるようにする
+  attr_reader :group
 
   # groupsモデル
   attribute :name, :string
@@ -21,18 +23,18 @@ class GroupCreateForm
     return false unless valid?
 
     ActiveRecord::Base.transaction do
-      group = user.created_groups.build(
+      @group = user.created_groups.build(
         name: name,
         trip_name: trip_name,
         start_date: start_date,
         end_date: end_date
       )
-      group.group_memberships.build(
+      @group.group_memberships.build(
         user_id: user.id,
         group_nickname: group_nickname,
         role: :owner
       )
-      group.save!
+      @group.save!
     end
 
     true

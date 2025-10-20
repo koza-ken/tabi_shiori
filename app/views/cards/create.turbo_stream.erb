@@ -1,0 +1,4 @@
+<!-- モーダルを閉じる（中身を空にする） -->
+<%= turbo_stream.update "card-create-modal", "" %>
+<!-- 一覧に追加 -->
+<%= turbo_stream.append "cards_list", partial: "cards/card", locals: { card: @card } %>

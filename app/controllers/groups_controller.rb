@@ -14,7 +14,11 @@ class GroupsController < ApplicationController
     @form = GroupCreateForm.new(group_form_params.merge(user: current_user))
     # モデルにコールバックを設定してトークン生成
     if @form.save
-      redirect_to groups_path, notice: "グループが作成されました"
+      @group = @form.group  # フォームオブジェクトから作成されたグループを取得
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to groups_path, notice: "グループが作成されました" }
+      end
     else
       render :new, status: :unprocessable_entity
     end
