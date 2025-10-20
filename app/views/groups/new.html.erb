@@ -1,63 +1,69 @@
-<main class="flex flex-col items-center justify-center px-8 py-12">
-  <h1 class="text-2xl font-bold text-primary mb-8"><%= t('.title') %></h1>
+<turbo-frame id="group-create-modal">
+  <!-- モーダルのラッパー -->
+  <div role="dialog" tabindex="-1" class="fixed inset-0 z-60 flex items-center justify-center w-full h-screen p-2">
+    <!-- 背景 -->
+    <div class="fixed inset-0 block w-full h-screen cursor-default bg-gray-900/30"></div>
+    <div class="relative z-20 w-full max-w-2xl max-h-screen overflow-y-auto bg-bg rounded-md">
+      <main class="flex flex-col items-center justify-center px-8 py-12">
+        <h1 class="text-2xl font-bold text-primary mb-8"><%= t('.title') %></h1>
 
-  <%= form_with model: @form, url: groups_path, class: "w-full max-w-md" do |f| %>
-    <!-- エラーメッセージ表示 -->
-    <% if @form.errors.any? %>
-      <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-        <h2 class="text-sm font-semibold text-red-800 mb-2">
-          <%= t('errors.messages.not_saved', count: @form.errors.count, resource: t('activerecord.models.group')) %>
-        </h2>
-        <ul class="list-disc list-inside text-sm text-red-700">
-          <% @form.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
+        <%= form_with model: @form, url: groups_path, class: "w-full max-w-md" do |f| %>
+          <!-- エラーメッセージ表示 -->
+          <% if @form.errors.any? %>
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h2 class="text-sm font-semibold text-red-800 mb-2">
+                <%= t('errors.messages.not_saved', count: @form.errors.count, resource: t('activerecord.models.group')) %>
+              </h2>
+              <ul class="list-disc list-inside text-sm text-red-700">
+                <% @form.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
           <% end %>
-        </ul>
-      </div>
-    <% end %>
 
-    <!-- カード名 -->
-    <div class="mb-6">
-      <%= f.label :name, t('groups.form.name'), class: "block text-sm font-medium text-text mb-2" %>
-      <%= f.text_field :name,
-          placeholder: t('groups.form.name_placeholder'),
-          class: "form-text-field" %>
-    </div>
+          <!-- カード名 -->
+          <div class="mb-6">
+            <%= f.label :name, t('groups.form.name'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :name,
+                placeholder: t('groups.form.name_placeholder'),
+                class: "form-text-field" %>
+          </div>
 
-    <!-- 開始日 -->
-    <div class="mb-6">
-      <%= f.label :start_date, t('groups.form.start_date'), class: "block text-sm font-medium text-text mb-2" %>
-      <%= f.date_field :start_date,
-          class: "form-text-field" %>
-    </div>
+          <!-- 開始日 -->
+          <div class="mb-6">
+            <%= f.label :start_date, t('groups.form.start_date'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.date_field :start_date,
+                class: "form-text-field" %>
+          </div>
 
-    <!-- 終了日 -->
-    <div class="mb-6">
-      <%= f.label :end_date, t('groups.form.end_date'), class: "block text-sm font-medium text-text mb-2" %>
-      <%= f.date_field :end_date,
-          class: "form-text-field" %>
-    </div>
+          <!-- 終了日 -->
+          <div class="mb-6">
+            <%= f.label :end_date, t('groups.form.end_date'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.date_field :end_date,
+                class: "form-text-field" %>
+          </div>
 
-    <!-- 旅行先 -->
-    <div class="mb-6">
-      <%= f.label :trip_name, t('groups.form.trip_name'), class: "block text-sm font-medium text-text mb-2" %>
-      <%= f.text_field :trip_name,
-          placeholder: t('groups.form.trip_name_placeholder'),
-          class: "form-text-field" %>
-    </div>
+          <!-- 旅行先 -->
+          <div class="mb-6">
+            <%= f.label :trip_name, t('groups.form.trip_name'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :trip_name,
+                placeholder: t('groups.form.trip_name_placeholder'),
+                class: "form-text-field" %>
+          </div>
 
-    <!-- グループでの名前 -->
-    <div class="mb-6">
-      <%= f.label :group_nickname, t('groups.form.group_nickname'), class: "block text-sm font-medium text-text mb-2" %>
-      <%= f.text_field :group_nickname,
-          placeholder: t('groups.form.group_nickname_placeholder'),
-          class: "form-text-field" %>
-    </div>
+          <!-- グループでの名前 -->
+          <div class="mb-6">
+            <%= f.label :group_nickname, t('groups.form.group_nickname'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :group_nickname,
+                placeholder: t('groups.form.group_nickname_placeholder'),
+                class: "form-text-field" %>
+          </div>
 
-    <!-- ボタン -->
-    <div class="flex gap-3 mt-12">
-      <%= f.submit t('groups.form.submit'), class: "btn-main flex-1" %>
-      <%= link_to t('groups.form.cancel'), groups_path, class: "btn-sub flex-1 text-center" %>
-    </div>
-  <% end %>
+          <!-- ボタン -->
+          <div class="flex gap-3 mt-12">
+            <%= f.submit t('groups.form.submit'), class: "btn-main flex-1" %>
+            <%= link_to t('groups.form.cancel'), groups_path, class: "btn-sub flex-1 text-center" %>
+          </div>
+        <% end %>
 </main>
