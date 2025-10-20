@@ -1,5 +1,5 @@
 <%# 作成モーダルの挿入 %>
-<%= turbo_frame_tag "card-create-modal" %>
+<%= turbo_frame_tag "card-create-modal", data: { controller: "modal" } %>
 
 <main class="flex flex-col items-center justify-center px-8 py-12">
   <h1><%= t('.title') %></h1>
