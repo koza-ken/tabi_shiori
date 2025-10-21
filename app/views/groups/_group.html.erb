@@ -1,3 +1,5 @@
-<div id="<%= dom_id(group) %>" class="card-index">
-  <%= group.name %>
-</div>
+<%= link_to group_path(group), id: dom_id(group), class: "card-index block" do %>
+  <div>
+    <%= group.name %>
+  </div>
+<% end %>
