@@ -3,5 +3,5 @@ Rails.application.routes.draw do
   root "static_pages#home"
 
   resources :cards, only: %i[index new create]
-  resources :groups, only: %i[index new create]
+  resources :groups, only: %i[index show new create]
 end
