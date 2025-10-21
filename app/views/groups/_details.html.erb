@@ -1,0 +1,24 @@
+<%= form_with model: group, class: "w-full max-w-md" do |f| %>
+  <div class="flex gap-6">
+    <%# 開始日 %>
+    <div class="mb-6">
+      <%= f.label :start_date, t('groups.form.start_date'), class: "block text-sm font-medium text-text mb-2" %>
+      <%= f.text_field :start_date, disabled: true, class: "form-text-field bg-gray-100" %>
+    </div>
+    <%# 終了日 %>
+    <div class="mb-6">
+      <%= f.label :end_date, t('groups.form.end_date'), class: "block text-sm font-medium text-text mb-2" %>
+      <%= f.text_field :end_date, disabled: true, class: "form-text-field bg-gray-100" %>
+    </div>
+  </div>
+  <%# 旅行先 %>
+  <div class="mb-6">
+    <%= f.label :trip_name, t('groups.form.trip_name'), class: "block text-sm font-medium text-text mb-2" %>
+    <%= f.text_field :trip_name, disabled: true, class: "form-text-field bg-gray-100" %>
+  </div>
+  <%# 参加者 %>
+  <div class="mb-6">
+    <%= label_tag :member, t('groups.show.members'), class: "block text-sm font-medium text-text mb-2" %>
+    <%= text_field_tag :member, nil, disabled: true, class: "form-text-field bg-gray-100" %>
+  </div>
+<% end %>
