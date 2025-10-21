@@ -1,4 +1,7 @@
- <div class="min-h-screen bg-main-bg">
+<%# 作成モーダルの挿入 %>
+<%= turbo_frame_tag "card-create-modal", data: { controller: "modal" } %>
+
+<div class="min-h-screen bg-main-bg">
   <main class="flex flex-col items-center justify-center px-8 py-12">
     <%# <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8"> %>
     <div class="w-full max-w-md mb-6">
