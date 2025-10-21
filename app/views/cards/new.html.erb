@@ -38,6 +38,9 @@
                 placeholder: t('cards.form.memo_placeholder'),
                 class: "form-text-field resize-vertical" %>
           </div>
+          
+          <!-- JavaScriptで動的に設定されるgroup_id -->
+          <%= f.hidden_field :group_id %>
 
           <!-- ボタン -->
           <div class="flex gap-3">

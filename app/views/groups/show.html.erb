@@ -1,4 +1,7 @@
- <div class="min-h-screen bg-main-bg">
+<%# 作成モーダルの挿入 %>
+<%= turbo_frame_tag "card-create-modal", data: { controller: "modal" } %>
+
+<div class="min-h-screen bg-main-bg">
   <main class="flex flex-col items-center justify-center px-8 py-12">
     <%# <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8"> %>
     <div class="w-full max-w-md mb-6">
@@ -25,11 +28,17 @@
         </svg>
       </div>
       <div>
-        <% if @group.cards.any? %>
-          <%= render "cards", card:@groups.cards %>
-        <% else %>
-           <p class="text-text"><%= t('.no_cards') %></p>
-        <% end %>
+        <div id="group_cards_list">
+          <%= render "cards", card:@group.cards %>
+        </div>
+        <div id="group-create-button" class="card-index border-dashed text-center mt-2" data-controller="modal">
+          <%= link_to new_card_path, data: {turbo_frame: "card-create-modal", action: "click->modal#setGroupId", group_id: @group.id}, class: "flex items-center justify-center gap-2" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <p>カードを追加する</p>
+          <% end %>
+        </div>
       </div>
     </div>
   </main>
