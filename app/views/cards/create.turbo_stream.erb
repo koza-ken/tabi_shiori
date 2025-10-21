@@ -1,4 +1,10 @@
 <!-- モーダルを閉じる（中身を空にする） -->
 <%= turbo_stream.update "card-create-modal", "" %>
-<!-- 一覧に追加 -->
-<%= turbo_stream.append "cards_list", partial: "cards/card", locals: { card: @card } %>
+
+<% if @card.group_id.present? %>
+  <!-- グループ詳細ページの場合 -->
+  <%= turbo_stream.append "group_cards_list", partial: "cards/card", locals: { card: @card } %>
+<% else %>
+  <!-- ユーザーページの場合 -->
+  <%= turbo_stream.append "cards_list", partial: "cards/card", locals: { card: @card } %>
+<% end %>
