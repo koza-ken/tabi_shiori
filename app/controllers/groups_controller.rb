@@ -5,6 +5,10 @@ class GroupsController < ApplicationController
     @groups = current_user.created_groups.includes(:group_memberships)
   end
 
+  def show
+    @group = Group.includes(:group_memberships, :cards).find(params[:id])
+  end
+
   def new
     @form = GroupCreateForm.new
   end
