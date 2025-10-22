@@ -4,22 +4,28 @@
 <div class="min-h-screen bg-main-bg">
   <main class="flex flex-col items-center justify-center px-8 py-12">
     <%# <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8"> %>
-    <div class="w-full max-w-md mb-6">
-      <div class="mb-8 flex justify-between">
-        <h2 class="text-2xl font-bold text-text text-center"><%= @group.name %></h2>
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="5" r="2"/>
-          <circle cx="12" cy="12" r="2"/>
-          <circle cx="12" cy="19" r="2"/>
-        </svg>
+    <div class="w-full max-w-md mb-10">
+      <div class="mb-4 flex justify-between items-center">
+        <div class="flex items-center">
+          <h2 class="text-2xl font-bold text-text"><%= @group.name %></h2>
+        </div>
       </div>
       <div id="group_details">
         <%= render "details", group: @group %>
       </div>
+      <div>
+        <button
+          data-controller="clipboard"
+          data-clipboard-text-value="<%= join_group_url(@group.invite_token) %>"
+          data-action="click->clipboard#copy"
+          class="px-4 py-2 bg-white border-2 border-gray-300 text-text rounded-lg hover:bg-gray-50 transition">
+          招待する
+        </button>
+      </div>
     </div>
 
     <div class="w-full max-w-md">
-      <div class="mb-8 flex justify-between">
+      <div class="mb-4 flex justify-between">
         <h2 class="text-2xl font-bold text-text text-center"><%= t('.travel_candidates') %></h2>
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <circle cx="12" cy="5" r="2"/>
