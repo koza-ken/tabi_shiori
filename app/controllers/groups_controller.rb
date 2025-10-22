@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_action :authenticate_user!, except: :join
 
   def index
-    @groups = current_user.created_groups.includes(:group_memberships)
+    @groups = current_user.groups.includes(:group_memberships)
   end
 
   def show
