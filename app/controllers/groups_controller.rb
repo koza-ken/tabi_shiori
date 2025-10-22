@@ -28,6 +28,29 @@ class GroupsController < ApplicationController
     end
   end
 
+  # グループ招待時の参加機能
+  def join
+    @group = Group.find_by(invite_token: params[:invite_token])
+    # トークンが既存グループと一致するか
+    if @group.nil?
+      redirect_to root_path, notice: "無効なリンクです"
+      return
+    end
+    # ユーザーがログインしているか
+    unless user_signed_in?
+      store_user_location!
+      redirect_to new_user_session_path
+      return
+    end
+    # グループメンバーシップのレコード作成（グループに参加紐づけ）
+    if @group.group_memberships.exists?(user_id: current_user.id)
+      redirect_to group_path(@group.id), notice: "#{@group.name}には参加済みです", status: :see_other
+    else
+      @group.group_memberships.create(user_id: current_user.id, group_nickname: current_user.email, role: "member")
+      redirect_to group_path(@group.id), notice: "#{@group.name}に参加しました", status: :see_other
+    end
+  end
+
   private
 
   # ストロングパラメータ
