@@ -18,7 +18,7 @@
   </div>
   <%# 参加者 %>
   <div class="mb-6">
-    <%= label_tag :member, t('groups.show.members'), class: "block text-sm font-medium text-text mb-2" %>
-    <%= text_field_tag :member, nil, disabled: true, class: "form-text-field bg-gray-100" %>
+    <%= label_tag :member, "#{t('groups.show.members')}（#{@group.group_memberships.count.to_s}名）", class: "block text-sm font-medium text-text mb-2" %>
+    <%= text_field_tag :member, @group.group_memberships.map(&:group_nickname).join("、"), disabled: true, class: "form-text-field bg-gray-100" %>
   </div>
 <% end %>
