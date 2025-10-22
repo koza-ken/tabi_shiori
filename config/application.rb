@@ -26,5 +26,7 @@ module Myapp
 
     # デフォルトを日本語に設定
     config.i18n.default_locale = :ja
+
+    config.assets.paths << Rails.root.join("app/assets/builds")
   end
 end
