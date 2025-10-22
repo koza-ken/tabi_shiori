@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: :join
 
   def index
     @groups = current_user.created_groups.includes(:group_memberships)
