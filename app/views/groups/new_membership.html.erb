@@ -1,0 +1,47 @@
+<div class="min-h-screen bg-main-bg">
+  <main class="flex flex-col items-center justify-center px-8 py-12">
+    <div class="w-full max-w-md">
+      <!-- タイトル -->
+      <h1 class="text-2xl font-bold text-text mb-2">グループに参加</h1>
+      <p class="text-sm text-gray-600 mb-8"><%= @group.name %>に招待されました。</p>
+
+
+      <!-- 過去に参加したことがある -->
+      <div class="mb-8">
+        <h2 class="text-sm font-semibold text-text mb-4">【過去に「<%= @group.name %>」に参加したことがある方】</h2>
+        <p class="text-xs text-gray-500 mb-4">前回参加したユーザーを選択してください。</p>
+
+        <%= form_with url: create_membership_path(@group.invite_token), method: :post, local: true do |f| %>
+          <%= f.select :group_nickname,
+              options_for_select([["選択してください", ""]] + @member_nicknames.map { |nickname| [nickname, nickname] }),
+              {},
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" %>
+          <%= f.hidden_field :membership_source, value: "dropdown" %>
+          <%= f.submit "参加する", class: "btn-main w-full mt-4" %>
+        <% end %>
+      </div>
+
+      <!-- はじめて参加する -->
+      <div class="mb-8">
+        <h2 class="text-sm font-semibold text-text mb-4">【はじめて「<%= @group.name %>」に参加する方】</h2>
+        <p class="text-xs text-gray-500 mb-4">ユーザー名を入力してください。</p>
+
+        <%= form_with url: create_membership_path(@group.invite_token), method: :post, local: true do |f| %>
+          <%= f.text_field :group_nickname,
+              placeholder: "ユーザー名",
+              class: "form-text-field" %>
+          <p class="text-xs text-gray-400 mt-2">ユーザー名は参加するグループ「<%= @group.name %>」でのみ有効です</p>
+          <%= f.hidden_field :membership_source, value: "text_input" %>
+          <%= f.submit "参加する", class: "btn-main w-full mt-4" %>
+        <% end %>
+      </div>
+
+      <!-- 新規登録リンク（未ログイン時のみ） -->
+      <% unless user_signed_in? %>
+        <div class="text-center pt-4 border-t border-gray-300">
+          <p class="text-sm text-gray-600 mb-3">新規ユーザー登録は<%= link_to "こちら", new_user_registration_path, class: "text-primary font-semibold hover:underline" %></p>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>
