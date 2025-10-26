@@ -1,7 +1,7 @@
 class CardsController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create]
+  before_action :authenticate_user!, except: [ :new, :create ]
   # ゲストユーザーでもグループ内でカード作成ができるように
-  before_action :authorize_group_member, only: [:create]
+  before_action :authorize_group_member, only: [ :create ]
 
   def index
     @cards = current_user.cards.includes(:user, :group)
@@ -55,7 +55,6 @@ class CardsController < ApplicationController
     if user_signed_in?
       unless GroupMembership.exists?(user_id: current_user.id, group_id: group_id)
         redirect_to groups_path, alert: "このグループに参加していません"
-        return
       end
     else
       # cookieにゲストトークンが保存されていればcookieからトークンを含むハッシュをguest_tokensに返し、保存されていなければ空のハッシュを返す
@@ -68,7 +67,6 @@ class CardsController < ApplicationController
       end
       unless GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
         redirect_to root_path, alert: "このグループに参加していません"
-        return
       end
     end
   end
