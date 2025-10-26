@@ -1,7 +1,7 @@
 class CardsController < ApplicationController
   before_action :authenticate_user!, except: [ :new, :create ]
   # ゲストユーザーでもグループ内でカード作成ができるように
-  before_action :authorize_group_member, only: [ :create ]
+  before_action :check_create_cards, only: [ :create ]
 
   def index
     @cards = current_user.cards.includes(:user, :group)
@@ -50,23 +50,29 @@ class CardsController < ApplicationController
 
   # refa
   # ゲストがグループ内でカードを作成できるようにするフィルター
-  def authorize_group_member
+  def check_create_cards
     group_id = card_params[:group_id]
-    if user_signed_in?
-      unless GroupMembership.exists?(user_id: current_user.id, group_id: group_id)
-        redirect_to groups_path, alert: "このグループに参加していません"
-      end
-    else
-      # cookieにゲストトークンが保存されていればcookieからトークンを含むハッシュをguest_tokensに返し、保存されていなければ空のハッシュを返す
-      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-      # トークンがあればハッシュからトークンの値を取り出す（グループに参加していない場合はnilになる）
-      stored_token = guest_tokens[group_id.to_s]
-      if stored_token.nil?
-        redirect_to root_path, alert: "このグループに参加していません"
+
+    # ログインしていない場合（ログインしていたら個人カード作成）
+    unless user_signed_in?
+      # ログインしていなくて、グループ所属もない場合のカード作成は、URL直接入力なので拒否
+      if group_id.blank?
+        @card = Card.new
+        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください１")
+        render :new, status: :unprocessable_entity
         return
       end
-      unless GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
-        redirect_to root_path, alert: "このグループに参加していません"
+
+      # ゲストトークンをcookieから取得
+      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
+      stored_token = guest_tokens[group_id.to_s]
+
+      # ログインしていなくて、tokenがないか、tokenが一致しない場合は権限なし
+      if stored_token.blank? || !GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
+        @card = Card.new
+        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください２")
+        render :new, status: :unprocessable_entity
+        return
       end
     end
   end
