@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
   before_action :authenticate_user!, except: [ :show, :new_membership, :create_membership ]
+  before_action :check_group_member, only: [ :show ]
 
   def index
     @groups = current_user.groups.includes(:group_memberships)
@@ -137,5 +138,23 @@ class GroupsController < ApplicationController
 
   def membership_params
     params.permit(:group_nickname, :membership_source, :invite_token)
+  end
+
+  # refa
+  # グループに参加しているか確認するフィルター（showアクション）
+  def check_group_member
+    @group = Group.find(params[:id])
+    if user_signed_in?
+      unless GroupMembership.exists?(user_id: current_user.id, group_id: @group.id)
+        redirect_to groups_path, alert: "このグループには参加していません"
+      end
+    else
+      # ログインしてなくて（user_idがnil）、参加していないグループにアクセスできないように
+      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
+      stored_token = guest_tokens[@group.id.to_s]
+      if stored_token.blank? || !GroupMembership.exists?(group_id: @group.id, guest_token: stored_token)
+        redirect_to root_path, alert: "このグループには参加していません"
+      end
+    end
   end
 end
