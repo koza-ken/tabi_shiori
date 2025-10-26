@@ -24,6 +24,8 @@
     <div class="relative min-h-screen bg-main-bg overflow-hidden">
       <%= yield %>
       <%= render "shared/hamburger_menu" %>
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
     </div>
   </body>
 </html>

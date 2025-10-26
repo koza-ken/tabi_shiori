@@ -7,5 +7,6 @@ Rails.application.routes.draw do
 
   # 招待リンクからの参加
   # asオプションで、/groups/join/:invite_tokenのURLを生成するヘルパーを定義
-  get "/groups/join/:invite_token", to: "groups#join", as: :join_group
+  get "/groups/join/:invite_token", to: "groups#new_membership", as: :new_membership
+  post "/groups/join/:invite_token", to: "groups#create_membership", as: :create_membership
 end
