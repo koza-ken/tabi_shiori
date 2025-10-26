@@ -72,7 +72,6 @@ class CardsController < ApplicationController
         @card = Card.new
         @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください２")
         render :new, status: :unprocessable_entity
-        return
       end
     end
   end
