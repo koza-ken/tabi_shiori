@@ -28,6 +28,7 @@ class GroupsController < ApplicationController
     end
   end
 
+  # refa
   # グループ招待ページ
   def new_membership
     @group = Group.find_by(invite_token: params[:invite_token])
@@ -49,6 +50,7 @@ class GroupsController < ApplicationController
     end
   end
 
+  # refa
   # グループ参加ページからのデータ処理
   def create_membership
     @group = Group.find_by(invite_token: params[:invite_token])
@@ -64,7 +66,6 @@ class GroupsController < ApplicationController
         @group_membership = @group.group_memberships.find_by(group_nickname: params[:group_nickname])
         if @group_membership.nil?
           # 見つからない場合のエラー処理
-          # ? これってrenderではない？
           redirect_to new_membership_path(@group.invite_token), alert: "選択したユーザーが見つかりません"
           return
         end
