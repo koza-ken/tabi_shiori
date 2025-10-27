@@ -7,6 +7,10 @@ class CardsController < ApplicationController
     @cards = current_user.cards.includes(:user, :group)
   end
 
+  def show
+    @card = Card.find(params[:id])
+  end
+
   def new
     # group_idはJavaScriptで設定されるので、空のカードを作成
     @card = Card.new
