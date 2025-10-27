@@ -1,13 +1,15 @@
 class GroupsController < ApplicationController
   before_action :authenticate_user!, except: [ :show, :new_membership, :create_membership ]
+  before_action :set_group, only: [ :show ]
   before_action :check_group_member, only: [ :show ]
+  before_action :set_group_by_invite_token, only: [ :new_membership, :create_membership ]
+  before_action :ensure_group_present!, only: [ :new_membership, :create_membership ]
 
   def index
     @groups = current_user.groups.includes(:group_memberships)
   end
 
   def show
-    @group = Group.includes(:group_memberships, :cards).find(params[:id])
   end
 
   def new
@@ -32,91 +34,25 @@ class GroupsController < ApplicationController
   # refa
   # グループ招待ページ
   def new_membership
-    @group = Group.find_by(invite_token: params[:invite_token])
-    # トークンが既存グループと一致するか
-    if @group.nil?
-      redirect_to root_path, notice: "無効なリンクです"
+    if user_already_member_of_group?
+      redirect_to group_path(@group.id)
       return
     end
 
-    # ユーザーがログインしているかで、グループ詳細ページか、招待ページを表示
-    if user_signed_in? && @group.group_memberships.exists?(user_id: current_user.id)
-      # グループにユーザーのメンバーシップがあればグループ詳細ページに遷移
-      redirect_to group_path(@group.id)
-    else
-      # ニックネームの一覧を取得
-      @member_nicknames = @group.group_memberships.where(user_id: nil).pluck(:group_nickname)
-      # メンバーシップがなければ、招待ページを表示
-      render :new_membership
-    end
+    # ニックネームの一覧を取得
+    @member_nicknames = available_guest_nicknames
   end
 
   # refa
   # グループ参加ページからのデータ処理
   def create_membership
-    @group = Group.find_by(invite_token: params[:invite_token])
-
-    if @group.nil?
-      redirect_to root_path, notice: "無効なリンクです"
-      return
-    end
-
-    case params[:membership_source]
+    case membership_params[:membership_source]
     when "dropdown"
-      # 選択したニックネームからメンバーシップを取得
-      @group_membership = @group.group_memberships.find_by(group_nickname: params[:group_nickname])
-      if @group_membership.nil?
-        # 見つからない場合のエラー処理
-        redirect_to new_membership_path(@group.invite_token), alert: "選択したユーザーが見つかりません"
-        return
-      end
-
-      # ログイン状態の確認
-      if user_signed_in?
-        # 取得したメンバーシップにuser_idを追加
-        @group_membership.update(user_id: current_user.id)
-      else
-        # ゲストユーザーの場合は、トークンがcookieに残っているか確認
-        if @group_membership.guest_token.blank?
-          # ゲストでcookieのトークンが残っていない場合は、トークンをメンバーシップのテーブルに保存
-          @group_membership.update(guest_token: @group_membership.generate_guest_token)
-          # トークンを書き込むメソッド（concernsのモジュール）
-          set_guest_token(@group.id, @group_membership.guest_token)
-        end
-      end
-
-      # ゲストの場合、Cookie のトークンと一致確認
-      if @group_membership.user_id.nil?
-        # cookieのguest_tokenのハッシュを取得（JSON文字列からパース）
-        stored_token = guest_token_for(@group.id)
-
-        # cokkieに記録してあるトークンとテーブルに保存してあるゲストユーザーのトークンが一致していない場合
-        if stored_token != @group_membership.guest_token
-          redirect_to new_membership_path(@group.invite_token), alert: "トークンが一致しません"
-          return
-        end
-      end
-
-      redirect_to group_path(@group.id), notice: "グループに参加しました"
-
+      handle_dropdown_membership
     when "text_input"
-      @group_membership = @group.group_memberships.build(group_nickname: params[:group_nickname], role: "member")
-      if user_signed_in?
-        @group_membership.user_id = current_user.id
-      else
-        @group_membership.guest_token = @group_membership.generate_guest_token
-      end
-
-      if @group_membership.save
-        # ゲストの場合、トークンを Cookie に保存
-        if @group_membership.guest_token.present?
-          # トークンを書き込むメソッド（concernsのモジュール）
-          set_guest_token(@group.id, @group_membership.guest_token)
-        end
-        redirect_to group_path(@group.id), notice: "グループに参加しました"
-      else
-        redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
-      end
+      handle_text_input_membership
+    else
+      redirect_to new_membership_path(@group.invite_token), alert: "無効な操作です"
     end
   end
 
@@ -134,8 +70,6 @@ class GroupsController < ApplicationController
   # refa
   # グループに参加しているか確認するフィルター（showアクション）
   def check_group_member
-    @group = Group.find(params[:id])
-
     authorized = if user_signed_in?
       current_user.member_of?(@group)
     else
@@ -146,5 +80,87 @@ class GroupsController < ApplicationController
       redirect_to (user_signed_in? ? groups_path : root_path),
                   alert: "このグループには参加していません"
     end
+  end
+
+  def set_group
+    @group = Group.includes(:group_memberships, :cards).find(params[:id])
+  end
+
+  def set_group_by_invite_token
+    @group = Group.find_by(invite_token: params[:invite_token])
+  end
+
+  def ensure_group_present!
+    return if @group.present?
+
+    redirect_to root_path, notice: "無効なリンクです"
+  end
+
+  def user_already_member_of_group?
+    user_signed_in? && @group.group_memberships.exists?(user_id: current_user.id)
+  end
+
+  def available_guest_nicknames
+    @group.group_memberships.where(user_id: nil).pluck(:group_nickname)
+  end
+
+  def handle_dropdown_membership
+    membership = @group.group_memberships.find_by(group_nickname: membership_params[:group_nickname])
+    unless membership
+      redirect_to new_membership_path(@group.invite_token), alert: "選択したユーザーが見つかりません"
+      return
+    end
+
+    unless attach_user_or_guest_token(membership)
+      redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
+      return
+    end
+
+    if membership.user_id.nil? && !guest_token_matches?(membership)
+      redirect_to new_membership_path(@group.invite_token), alert: "トークンが一致しません"
+      return
+    end
+
+    redirect_to group_path(@group.id), notice: "グループに参加しました"
+  end
+
+  def handle_text_input_membership
+    membership = @group.group_memberships.build(group_nickname: membership_params[:group_nickname], role: "member")
+    if user_signed_in?
+      membership.user = current_user
+    else
+      membership.guest_token = membership.generate_guest_token
+    end
+
+    if membership.save
+      set_guest_token(@group.id, membership.guest_token) if membership.guest_token.present?
+      redirect_to group_path(@group.id), notice: "グループに参加しました"
+    else
+      redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
+    end
+  end
+
+  def attach_user_or_guest_token(membership)
+    if user_signed_in?
+      membership.update(user_id: current_user.id)
+    else
+      ensure_guest_token!(membership)
+    end
+  end
+
+  def ensure_guest_token!(membership)
+    return true if membership.guest_token.present?
+
+    if membership.update(guest_token: membership.generate_guest_token)
+      set_guest_token(@group.id, membership.guest_token)
+      true
+    else
+      false
+    end
+  end
+
+  def guest_token_matches?(membership)
+    stored_token = guest_token_for(@group.id)
+    stored_token == membership.guest_token
   end
 end
