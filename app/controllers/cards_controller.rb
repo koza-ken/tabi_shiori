@@ -101,8 +101,6 @@ class CardsController < ApplicationController
       # ゲストユーザーの場合
       if @card.group_id.present?
         # グループカード：ゲストも所属しているグループのみアクセス可能（concernのモジュール）
-        guest_group_ids
-
         unless guest_group_ids.include?(@card.group_id)
           redirect_to root_path, alert: "このカードを閲覧する権限がありません"
         end
