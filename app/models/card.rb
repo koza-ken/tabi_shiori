@@ -68,6 +68,10 @@ class Card < ApplicationRecord
     end
   end
 
+  def group_card?
+    group_id.present?
+  end
+
   private
 
   def must_belong_to_user_or_group
