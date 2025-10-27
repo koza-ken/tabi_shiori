@@ -33,6 +33,10 @@ class CardsController < ApplicationController
 
   private
 
+  def set_card
+    @card = Card.find(params[:id])
+  end
+
   # ログインしていればcurrent_user、していなければnilを返す（ログインの有無の条件分岐が不要になる）
   def current_user_if_signed_in
     user_signed_in? ? current_user : nil
