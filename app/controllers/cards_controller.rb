@@ -110,4 +110,11 @@ class CardsController < ApplicationController
       end
     end
   end
+
+  # ゲストがカードの作成に失敗したときのレンダリング処理
+  def render_guest_creation_error(message)
+    @card = Card.new
+    @card.errors.add(:base, message)
+    render :new, status: :unprocessable_entity
+  end
 end
