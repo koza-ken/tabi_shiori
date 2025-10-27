@@ -52,7 +52,6 @@ class CardsController < ApplicationController
     params.require(:card).permit(:name, :memo, :group_id)
   end
 
-  # refa
   # ゲストがグループ内でカードを作成できるようにするフィルター
   def check_create_cards
     group_id = card_params[:group_id]
