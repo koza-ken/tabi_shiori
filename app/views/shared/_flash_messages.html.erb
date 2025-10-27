@@ -1,0 +1,36 @@
+<%# フラッシュメッセージ（ポップアップ通知） %>
+<div class="fixed top-20 right-4 z-50 space-y-2">
+  <% flash.each do |type, message| %>
+    <div
+      data-controller="flash"
+      data-action="click->flash#close"
+      <%# ヘルパー %>
+      class="<%= flash_style_classes(type) %> flex items-center justify-between gap-4 px-4 py-3 rounded-lg shadow-lg cursor-pointer min-w-[300px] max-w-md transition-all duration-300"
+      style="opacity: 0; transform: translateX(100%);">
+
+      <%# メッセージアイコンとテキスト %>
+      <div class="flex items-center gap-3">
+        <%# アイコン %>
+        <div class="flex-shrink-0">
+          <%# ヘルパー %>
+          <%= flash_icon(type) %>
+        </div>
+
+        <%# メッセージテキスト %>
+        <p class="text-sm font-medium text-white">
+          <%= message %>
+        </p>
+      </div>
+
+      <%# 閉じるボタン %>
+      <button
+        type="button"
+        class="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+        aria-label="閉じる">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  <% end %>
+</div>
