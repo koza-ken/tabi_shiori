@@ -1,3 +1,5 @@
-<div id="<%= dom_id(card) %>" class="card-index">
-  <%= card.name %>
-</div>
+<%= link_to card_path(card) do %>
+  <div id="<%= dom_id(card) %>" class="card-index mb-2">
+    <%= card.name %>
+  </div>
+<% end %>

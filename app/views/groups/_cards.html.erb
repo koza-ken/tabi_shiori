@@ -1,5 +1,7 @@
 <% @group.cards.each do |card| %>
-  <div class="card-index mb-2">
-    <%= card.name %>
-  </div>
+  <%= link_to card_path(card) do %>
+    <div class="card-index mb-2">
+      <%= card.name %>
+    </div>
+  <% end %>
 <% end %>

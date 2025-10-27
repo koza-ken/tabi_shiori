@@ -2,9 +2,15 @@ class CardsController < ApplicationController
   before_action :authenticate_user!, except: [ :new, :create ]
   # ゲストユーザーでもグループ内でカード作成ができるように
   before_action :check_create_cards, only: [ :create ]
+  # 自分のカードか、参加しているグループのカードのみにアクセスできる
+  before_action :check_show_card, only: [ :show ]
 
   def index
     @cards = current_user.cards.includes(:user, :group)
+  end
+
+  def show
+    @card = Card.find(params[:id])
   end
 
   def new
@@ -72,6 +78,39 @@ class CardsController < ApplicationController
         @card = Card.new
         @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください２")
         render :new, status: :unprocessable_entity
+      end
+    end
+  end
+
+  # カード詳細にアクセスできるのは、自分の個人用カードか、参加しているグループのカード
+  def check_show_card
+    @card = Card.find(params[:id])
+    # ログインしている
+    if user_signed_in?
+      # グループのカードじゃない
+      if @card.group_id.nil?
+        if current_user.id != @card.user_id
+          redirect_to cards_path, alert: "他人のカードは見ることができません"
+        end
+      else
+        unless GroupMembership.exists?(user_id: current_user.id, group_id: @card.group_id)
+          redirect_to groups_path, alert: "このグループに参加していません"
+        end
+      end
+    # ログインしていない
+    else
+      # ゲストユーザーの場合
+      if @card.group_id.present?
+        # グループカード：ゲストも所属しているグループのみアクセス可能
+        guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
+        guest_group_ids = guest_tokens.keys.map(&:to_i)
+
+        unless guest_group_ids.include?(@card.group_id)
+          redirect_to root_path, alert: "このカードを閲覧する権限がありません"
+        end
+      else
+        # ゲストは個人カードにアクセスできない
+        redirect_to root_path, alert: "このカードを閲覧する権限がありません"
       end
     end
   end
