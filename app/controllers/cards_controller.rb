@@ -45,8 +45,8 @@ class CardsController < ApplicationController
   end
 
   # リダイレクト先を決定
-  def redirect_path
-    @card.group_id.present? ? group_path(@card.group_id) : cards_path
+  def redirect_path_for(card)
+    card.group_card? ? group_path(card.group_id) : cards_path
   end
 
   # ストロングパラメータ
