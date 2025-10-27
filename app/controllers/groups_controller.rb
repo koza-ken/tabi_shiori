@@ -135,16 +135,16 @@ class GroupsController < ApplicationController
   # グループに参加しているか確認するフィルター（showアクション）
   def check_group_member
     @group = Group.find(params[:id])
-    if user_signed_in?
-      unless GroupMembership.exists?(user_id: current_user.id, group_id: @group.id)
-        redirect_to groups_path, alert: "このグループには参加していません"
-      end
+
+    authorized = if user_signed_in?
+      current_user.member_of?(@group)
     else
-      # ログインしてなくて（user_idがnil）、参加していないグループにアクセスできないように（concernのモジュール）
-      stored_token = guest_token_for(@group.id)
-      if stored_token.blank? || !GroupMembership.exists?(group_id: @group.id, guest_token: stored_token)
-        redirect_to root_path, alert: "このグループには参加していません"
-      end
+      GroupMembership.guest_member?(guest_token_for(@group.id), @group.id)
+    end
+
+    unless authorized
+      redirect_to (user_signed_in? ? groups_path : root_path),
+                  alert: "このグループには参加していません"
     end
   end
 end
