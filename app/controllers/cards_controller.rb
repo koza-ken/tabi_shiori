@@ -91,17 +91,15 @@ class CardsController < ApplicationController
       if @card.group_id.nil?
         if current_user.id != @card.user_id
           redirect_to cards_path, alert: "他人のカードは見ることができません"
-          return
         end
       else
         unless GroupMembership.exists?(user_id: current_user.id, group_id: @card.group_id)
           redirect_to groups_path, alert: "このグループに参加していません"
-          return
         end
       end
     # ログインしていない
     else
-        # ゲストユーザーの場合
+      # ゲストユーザーの場合
       if @card.group_id.present?
         # グループカード：ゲストも所属しているグループのみアクセス可能
         guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
@@ -109,12 +107,10 @@ class CardsController < ApplicationController
 
         unless guest_group_ids.include?(@card.group_id)
           redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-          return
         end
       else
         # ゲストは個人カードにアクセスできない
         redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-        return
       end
     end
   end
