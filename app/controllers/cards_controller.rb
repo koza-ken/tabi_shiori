@@ -77,31 +77,11 @@ class CardsController < ApplicationController
 
   # カード詳細にアクセスできるのは、自分の個人用カードか、参加しているグループのカード
   def check_show_card
-    @card = Card.find(params[:id])
-    # ログインしている
-    if user_signed_in?
-      # グループのカードじゃない
-      if @card.group_id.nil?
-        if current_user.id != @card.user_id
-          redirect_to cards_path, alert: "他人のカードは見ることができません"
-        end
-      else
-        unless GroupMembership.exists?(user_id: current_user.id, group_id: @card.group_id)
-          redirect_to groups_path, alert: "このグループに参加していません"
-        end
-      end
-    # ログインしていない
-    else
-      # ゲストユーザーの場合
-      if @card.group_id.present?
-        # グループカード：ゲストも所属しているグループのみアクセス可能（concernのモジュール）
-        unless guest_group_ids.include?(@card.group_id)
-          redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-        end
-      else
-        # ゲストは個人カードにアクセスできない
-        redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-      end
+    authorized = @card.accessible?(user: current_user_if_signed_in, guest_group_ids: guest_group_ids)
+
+    unless authorized
+      redirect_to (user_signed_in? ? cards_path : root_path),
+                  alert: "このカードを閲覧する権限がありません"
     end
   end
 
