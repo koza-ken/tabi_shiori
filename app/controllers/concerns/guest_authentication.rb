@@ -4,7 +4,7 @@ module GuestAuthentication
 
   # cookieから全ゲストトークンを取得
   def guest_tokens
-    return {} unless cookies.encrypted[:guest_tokens].present?
+    return {} if cookies.encrypted[:guest_tokens].blank?
     JSON.parse(cookies.encrypted[:guest_tokens])
   rescue JSON::ParserError
     {}
