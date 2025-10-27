@@ -1,0 +1,22 @@
+# Cookie に保存されたゲストユーザーの「どのグループに参加しているか」と「各グループの認証トークン」を取得するメソッド
+module GuestAuthentication
+  extend ActiveSupport::Concern
+
+  # cookieから全ゲストトークンを取得
+  def guest_tokens
+    return {} unless cookies.encrypted[:guest_tokens].present?
+    JSON.parse(cookies.encrypted[:guest_tokens])
+  rescue JSON::ParserError
+    {}
+  end
+
+  # ゲストが参加している全グループIDを取得
+  def guest_group_ids
+    guest_tokens.keys.map(&:to_i)
+  end
+
+  # 特定グループのゲストトークンを取得
+  def guest_token_for(group_id)
+    guest_tokens[group_id.to_s]
+  end
+end
