@@ -1,13 +1,16 @@
 class GroupsController < ApplicationController
   before_action :authenticate_user!, except: [ :show, :new_membership, :create_membership ]
+  before_action :set_group, only: [ :show ]
   before_action :check_group_member, only: [ :show ]
+  before_action :set_group_by_invite_token, only: [ :new_membership, :create_membership ]
+  # set_group_by_invite_tokenで招待トークンをもとに@groupがあるかないか
+  before_action :ensure_group_present!, only: [ :new_membership, :create_membership ]
 
   def index
     @groups = current_user.groups.includes(:group_memberships)
   end
 
   def show
-    @group = Group.includes(:group_memberships, :cards).find(params[:id])
   end
 
   def new
@@ -22,110 +25,32 @@ class GroupsController < ApplicationController
       @group = @form.group  # フォームオブジェクトから作成されたグループを取得
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to groups_path, notice: "グループが作成されました" }
+        format.html { redirect_to groups_path, notice: t("notices.groups.created") }
       end
     else
       render :new, status: :unprocessable_entity
     end
   end
 
-  # refa
   # グループ招待ページ
   def new_membership
-    @group = Group.find_by(invite_token: params[:invite_token])
-    # トークンが既存グループと一致するか
-    if @group.nil?
-      redirect_to root_path, notice: "無効なリンクです"
+    if user_already_member_of_group?
+      redirect_to group_path(@group.id)
       return
     end
-
-    # ユーザーがログインしているかで、グループ詳細ページか、招待ページを表示
-    if user_signed_in? && @group.group_memberships.exists?(user_id: current_user.id)
-      # グループにユーザーのメンバーシップがあればグループ詳細ページに遷移
-      redirect_to group_path(@group.id)
-    else
-      # ニックネームの一覧を取得
-      @member_nicknames = @group.group_memberships.where(user_id: nil).pluck(:group_nickname)
-      # メンバーシップがなければ、招待ページを表示
-      render :new_membership
-    end
+    # ニックネームの一覧を取得
+    @member_nicknames = available_guest_nicknames
   end
 
-  # refa
   # グループ参加ページからのデータ処理
   def create_membership
-    @group = Group.find_by(invite_token: params[:invite_token])
-
-    if @group.nil?
-      redirect_to root_path, notice: "無効なリンクです"
-      return
-    end
-
-    case params[:membership_source]
+    case membership_params[:membership_source]
     when "dropdown"
-      # 選択したニックネームからメンバーシップを取得
-      @group_membership = @group.group_memberships.find_by(group_nickname: params[:group_nickname])
-      if @group_membership.nil?
-        # 見つからない場合のエラー処理
-        redirect_to new_membership_path(@group.invite_token), alert: "選択したユーザーが見つかりません"
-        return
-      end
-
-      # ログイン状態の確認
-      if user_signed_in?
-        # 取得したメンバーシップにuser_idを追加
-        @group_membership.update(user_id: current_user.id)
-      else
-        # ゲストユーザーの場合は、トークンがcookieに残っているか確認
-        if @group_membership.guest_token.blank?
-          # ゲストでcookieのトークンが残っていない場合は、トークンをメンバーシップのテーブルに保存
-          @group_membership.update(guest_token: @group_membership.generate_guest_token)
-          # cookieのハッシュを取得（JSON文字列からパース）
-          guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-          # ハッシュに保存 → { "1" => "abc123..." }
-          guest_tokens[@group.id.to_s] = @group_membership.guest_token
-          # JSON文字列に変換してcookieに保存
-          cookies.encrypted[:guest_tokens] = guest_tokens.to_json
-        end
-      end
-
-      # ゲストの場合、Cookie のトークンと一致確認
-      if @group_membership.user_id.nil?
-        # cookieのguest_tokenのハッシュを取得（JSON文字列からパース）
-        guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-        stored_token = guest_tokens[@group.id.to_s]
-
-        # cokkieに記録してあるトークンとテーブルに保存してあるゲストユーザーのトークンが一致していない場合
-        if stored_token != @group_membership.guest_token
-          redirect_to new_membership_path(@group.invite_token), alert: "トークンが一致しません"
-          return
-        end
-      end
-
-      redirect_to group_path(@group.id), notice: "グループに参加しました"
-
+      handle_dropdown_membership
     when "text_input"
-      @group_membership = @group.group_memberships.build(group_nickname: params[:group_nickname], role: "member")
-      if user_signed_in?
-        @group_membership.user_id = current_user.id
-      else
-        @group_membership.guest_token = @group_membership.generate_guest_token
-      end
-
-      if @group_membership.save
-        # ゲストの場合、トークンを Cookie に保存
-        if @group_membership.guest_token.present?
-          # 初回参加は空のハッシュ、cookieが残っていればcookieのハッシュ（JSON文字列からパース）
-          guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-          # ハッシュに保存 → { "1" => "abc123..." }
-          guest_tokens[@group.id.to_s] = @group_membership.guest_token
-          # JSON文字列に変換してcookieに保存
-          cookies.encrypted[:guest_tokens] = guest_tokens.to_json
-        end
-        redirect_to group_path(@group.id), notice: "グループに参加しました"
-      else
-        redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
-      end
+      handle_text_input_membership
+    else
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.invalid_operation")
     end
   end
 
@@ -140,21 +65,110 @@ class GroupsController < ApplicationController
     params.permit(:group_nickname, :membership_source, :invite_token)
   end
 
-  # refa
-  # グループに参加しているか確認するフィルター（showアクション）
+  # グループに参加しているか確認するフィルター（showアクションのフィルター）
   def check_group_member
-    @group = Group.find(params[:id])
-    if user_signed_in?
-      unless GroupMembership.exists?(user_id: current_user.id, group_id: @group.id)
-        redirect_to groups_path, alert: "このグループには参加していません"
-      end
+    authorized = if user_signed_in?
+      current_user.member_of?(@group)
     else
-      # ログインしてなくて（user_idがnil）、参加していないグループにアクセスできないように
-      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-      stored_token = guest_tokens[@group.id.to_s]
-      if stored_token.blank? || !GroupMembership.exists?(group_id: @group.id, guest_token: stored_token)
-        redirect_to root_path, alert: "このグループには参加していません"
-      end
+      GroupMembership.guest_member?(guest_token_for(@group.id), @group.id)
     end
+
+    unless authorized
+      redirect_to (user_signed_in? ? groups_path : root_path), alert: t("errors.groups.not_member")
+    end
+  end
+
+  def set_group
+    @group = Group.includes(:group_memberships, :cards).find(params[:id])
+  end
+
+  # 招待用トークンからグループを取得（new_membership、create_membershipアクションのフィルター）
+  def set_group_by_invite_token
+    @group = Group.find_by(invite_token: params[:invite_token])
+  end
+
+  # @groupがなければroot_pathに（new_membership、create_membershipアクションのフィルター）
+  def ensure_group_present!
+    return if @group.present?
+    redirect_to root_path, notice: t("errors.groups.invalid_link")
+  end
+
+  # ログインしていて、かつ、そのユーザーがそのグループに参加しているか（new_membershipアクション）
+  def user_already_member_of_group?
+    user_signed_in? && @group.group_memberships.exists?(user_id: current_user.id)
+  end
+
+  # グループのニックネーム一覧を取得（new_membershipアクション）
+  def available_guest_nicknames
+    @group.group_memberships.where(user_id: nil).pluck(:group_nickname)
+  end
+
+  # ニックネーム一覧のドロップダウンからグループ参加の処理をまとめたメソッド（create_membershipアクション）
+  def handle_dropdown_membership
+    membership = @group.group_memberships.find_by(group_nickname: membership_params[:group_nickname])
+    # 選択したニックネームからメンバーシップをさがす
+    unless membership
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.user_not_found")
+      return
+    end
+
+    # 見つかったメンバーシップに、user_idかトークンを紐づける
+    unless attach_user_or_guest_token(membership)
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.membership_failed")
+      return
+    end
+
+    # ゲスト参加で、トークンが一致しない場合
+    if membership.user_id.nil? && !guest_token_matches?(membership)
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.token_mismatch")
+      return
+    end
+
+    # 問題なければグループに参加する
+    redirect_to group_path(@group.id), notice: t("notices.groups.joined")
+  end
+
+  # ニックネームの入力からのグループ参加の処理をまとめたメソッド（create_membershipアクション）
+  def handle_text_input_membership
+    membership = @group.group_memberships.build(group_nickname: membership_params[:group_nickname], role: "member")
+    if user_signed_in?
+      membership.user = current_user
+    else
+      membership.guest_token = membership.generate_guest_token
+    end
+
+    if membership.save
+      set_guest_token(@group.id, membership.guest_token) if membership.guest_token.present?
+      redirect_to group_path(@group.id), notice: t("notices.groups.joined")
+    else
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.membership_failed")
+    end
+  end
+
+  # （create_membershipアクションのhandle_dropdown_membershipメソッド）
+  def attach_user_or_guest_token(membership)
+    if user_signed_in?
+      membership.update(user_id: current_user.id)
+    else
+      ensure_guest_token!(membership)
+    end
+  end
+
+  # メンバーシップにゲスト用トークンがついているか確認し、なければ発行して保存するメソッド
+  def ensure_guest_token!(membership)
+    # トークンがあればtrueを返して処理おわり
+    return true if membership.guest_token.present?
+    if membership.update(guest_token: membership.generate_guest_token)
+      set_guest_token(@group.id, membership.guest_token)
+      true
+    else
+      false
+    end
+  end
+
+  # （create_membershipアクションのhandle_dropdown_membershipメソッド）
+  def guest_token_matches?(membership)
+    stored_token = guest_token_for(@group.id)
+    stored_token == membership.guest_token
   end
 end

@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  scan_ruby:
+  ruby_brakeman:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
-  scan_js:
+  js_dependency_scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,7 @@ jobs:
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: yarn audit
 
-  lint:
+  ruby_rubocop:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -56,7 +56,7 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-  build:
+  js_asset_build:
     runs-on: ubuntu-latest
 
     steps:

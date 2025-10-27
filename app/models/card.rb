@@ -28,6 +28,50 @@ class Card < ApplicationRecord
   # カスタムバリデーション: user_idとgroup_idの排他制約
   validate :must_belong_to_user_or_group
 
+  # 渡されたパラメータから適切なCardインスタンス（個人用カードかグループ用カードか）をつくるメソッド
+  def self.build_for(user:, attributes:)
+    attributes = attributes.to_h
+    # 属性にgroup_idがあれば、グループカードとしてCard.newを返す
+    if attributes["group_id"].present? || attributes[:group_id].present?
+      new(attributes)
+    # group_idがなければ、個人用カードとしてuser.cards.buildを返す
+    else
+      raise ArgumentError, "個人用カードを作成するにはログインが必要です" unless user
+      user.cards.build(attributes)
+    end
+  end
+
+  # そのユーザーがカードにアクセス可能か
+  def accessible_by_user?(user)
+    if group_id.present?
+      # グループカード：グループメンバーのみ
+      user.member_of?(group)
+    else
+      # 個人カード：所有者のみ
+      user_id == user.id
+    end
+  end
+
+  # ゲストユーザーがカードにアクセス可能か
+  def accessible_by_guest?(guest_group_ids)
+    return false if group_id.blank?  # 個人カードは不可
+    guest_group_ids.include?(group_id)
+  end
+
+  # 引数にuserがあれば、accessible_by_user?でカードにアクセス可能か確認
+  #  userがなければ（ゲスト）、参加済みグループのidにカードのidが含まれるかを確認
+  def accessible?(user:, guest_group_ids:)
+    if user.present?
+      accessible_by_user?(user)
+    else
+      accessible_by_guest?(guest_group_ids)
+    end
+  end
+
+  def group_card?
+    group_id.present?
+  end
+
   private
 
   def must_belong_to_user_or_group

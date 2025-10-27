@@ -1,8 +1,9 @@
 class CardsController < ApplicationController
-  before_action :authenticate_user!, except: [ :new, :create ]
+  before_action :authenticate_user!, except: [ :new, :create, :show ]
   # ゲストユーザーでもグループ内でカード作成ができるように
   before_action :check_create_cards, only: [ :create ]
   # 自分のカードか、参加しているグループのカードのみにアクセスできる
+  before_action :set_card, only: [ :show ]
   before_action :check_show_card, only: [ :show ]
 
   def index
@@ -10,7 +11,6 @@ class CardsController < ApplicationController
   end
 
   def show
-    @card = Card.find(params[:id])
   end
 
   def new
@@ -19,12 +19,12 @@ class CardsController < ApplicationController
   end
 
   def create
-    @card = build_card
+    @card = Card.build_for(user: current_user_if_signed_in, attributes: card_params)
 
     if @card.save
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to redirect_path, notice: "カードが作成されました" }
+        format.html { redirect_to redirect_path_for(@card), notice: t("notices.cards.created") }
       end
     else
       render :new, status: :unprocessable_entity
@@ -33,20 +33,18 @@ class CardsController < ApplicationController
 
   private
 
-  # カードを作成（group_idの有無で分岐）
-  def build_card
-    if card_params[:group_id].present?
-      # グループのカードを作成（user_idはnil）
-      Card.new(card_params)
-    else
-      # ユーザーのカードを作成（group_idはnil）
-      current_user.cards.build(card_params)
-    end
+  def set_card
+    @card = Card.find(params[:id])
+  end
+
+  # ログインしていればcurrent_user、していなければnilを返す（ログインの有無の条件分岐が不要になる）
+  def current_user_if_signed_in
+    user_signed_in? ? current_user : nil
   end
 
   # リダイレクト先を決定
-  def redirect_path
-    @card.group_id.present? ? group_path(@card.group_id) : cards_path
+  def redirect_path_for(card)
+    card.group_card? ? group_path(card.group_id) : cards_path
   end
 
   # ストロングパラメータ
@@ -54,7 +52,6 @@ class CardsController < ApplicationController
     params.require(:card).permit(:name, :memo, :group_id)
   end
 
-  # refa
   # ゲストがグループ内でカードを作成できるようにするフィルター
   def check_create_cards
     group_id = card_params[:group_id]
@@ -63,55 +60,34 @@ class CardsController < ApplicationController
     unless user_signed_in?
       # ログインしていなくて、グループ所属もない場合のカード作成は、URL直接入力なので拒否
       if group_id.blank?
-        @card = Card.new
-        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください１")
-        render :new, status: :unprocessable_entity
+        render_guest_creation_error(t("errors.cards.guest_creation_not_allowed"))
         return
       end
 
-      # ゲストトークンをcookieから取得
-      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-      stored_token = guest_tokens[group_id.to_s]
+      # ゲストトークンをcookieから取得（concernのモジュール）
+      stored_token = guest_token_for(group_id)
 
       # ログインしていなくて、tokenがないか、tokenが一致しない場合は権限なし
-      if stored_token.blank? || !GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
-        @card = Card.new
-        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください２")
-        render :new, status: :unprocessable_entity
+      unless GroupMembership.guest_member?(stored_token, group_id)
+        render_guest_creation_error(t("errors.cards.guest_not_member"))
       end
     end
   end
 
   # カード詳細にアクセスできるのは、自分の個人用カードか、参加しているグループのカード
   def check_show_card
-    @card = Card.find(params[:id])
-    # ログインしている
-    if user_signed_in?
-      # グループのカードじゃない
-      if @card.group_id.nil?
-        if current_user.id != @card.user_id
-          redirect_to cards_path, alert: "他人のカードは見ることができません"
-        end
-      else
-        unless GroupMembership.exists?(user_id: current_user.id, group_id: @card.group_id)
-          redirect_to groups_path, alert: "このグループに参加していません"
-        end
-      end
-    # ログインしていない
-    else
-      # ゲストユーザーの場合
-      if @card.group_id.present?
-        # グループカード：ゲストも所属しているグループのみアクセス可能
-        guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-        guest_group_ids = guest_tokens.keys.map(&:to_i)
+    authorized = @card.accessible?(user: current_user_if_signed_in, guest_group_ids: guest_group_ids)
 
-        unless guest_group_ids.include?(@card.group_id)
-          redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-        end
-      else
-        # ゲストは個人カードにアクセスできない
-        redirect_to root_path, alert: "このカードを閲覧する権限がありません"
-      end
+    unless authorized
+      redirect_to (user_signed_in? ? cards_path : root_path),
+                  alert: t("errors.cards.unauthorized_view")
     end
+  end
+
+  # ゲストがカードの作成に失敗したときのレンダリング処理
+  def render_guest_creation_error(message)
+    @card = Card.new
+    @card.errors.add(:base, message)
+    render :new, status: :unprocessable_entity
   end
 end
