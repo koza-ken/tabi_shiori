@@ -69,9 +69,8 @@ class CardsController < ApplicationController
         return
       end
 
-      # ゲストトークンをcookieから取得
-      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-      stored_token = guest_tokens[group_id.to_s]
+      # ゲストトークンをcookieから取得（concernのモジュール）
+      stored_token = guest_token_for(group_id)
 
       # ログインしていなくて、tokenがないか、tokenが一致しない場合は権限なし
       if stored_token.blank? || !GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
@@ -101,9 +100,8 @@ class CardsController < ApplicationController
     else
       # ゲストユーザーの場合
       if @card.group_id.present?
-        # グループカード：ゲストも所属しているグループのみアクセス可能
-        guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-        guest_group_ids = guest_tokens.keys.map(&:to_i)
+        # グループカード：ゲストも所属しているグループのみアクセス可能（concernのモジュール）
+        guest_group_ids
 
         unless guest_group_ids.include?(@card.group_id)
           redirect_to root_path, alert: "このカードを閲覧する権限がありません"

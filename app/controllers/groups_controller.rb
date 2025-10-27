@@ -92,8 +92,7 @@ class GroupsController < ApplicationController
       # ゲストの場合、Cookie のトークンと一致確認
       if @group_membership.user_id.nil?
         # cookieのguest_tokenのハッシュを取得（JSON文字列からパース）
-        guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-        stored_token = guest_tokens[@group.id.to_s]
+        stored_token = guest_token_for(@group.id)
 
         # cokkieに記録してあるトークンとテーブルに保存してあるゲストユーザーのトークンが一致していない場合
         if stored_token != @group_membership.guest_token
@@ -149,9 +148,8 @@ class GroupsController < ApplicationController
         redirect_to groups_path, alert: "このグループには参加していません"
       end
     else
-      # ログインしてなくて（user_idがnil）、参加していないグループにアクセスできないように
-      guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-      stored_token = guest_tokens[@group.id.to_s]
+      # ログインしてなくて（user_idがnil）、参加していないグループにアクセスできないように（concernのモジュール）
+      stored_token = guest_token_for(@group.id)
       if stored_token.blank? || !GroupMembership.exists?(group_id: @group.id, guest_token: stored_token)
         redirect_to root_path, alert: "このグループには参加していません"
       end
