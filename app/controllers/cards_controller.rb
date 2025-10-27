@@ -33,15 +33,9 @@ class CardsController < ApplicationController
 
   private
 
-  # カードを作成（group_idの有無で分岐）
-  def build_card
-    if card_params[:group_id].present?
-      # グループのカードを作成（user_idはnil）
-      Card.new(card_params)
-    else
-      # ユーザーのカードを作成（group_idはnil）
-      current_user.cards.build(card_params)
-    end
+  # ログインしていればcurrent_user、していなければnilを返す（ログインの有無の条件分岐が不要になる）
+  def current_user_if_signed_in
+    user_signed_in? ? current_user : nil
   end
 
   # リダイレクト先を決定
