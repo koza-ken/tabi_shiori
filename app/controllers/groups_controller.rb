@@ -80,12 +80,8 @@ class GroupsController < ApplicationController
         if @group_membership.guest_token.blank?
           # ゲストでcookieのトークンが残っていない場合は、トークンをメンバーシップのテーブルに保存
           @group_membership.update(guest_token: @group_membership.generate_guest_token)
-          # cookieのハッシュを取得（JSON文字列からパース）
-          guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-          # ハッシュに保存 → { "1" => "abc123..." }
-          guest_tokens[@group.id.to_s] = @group_membership.guest_token
-          # JSON文字列に変換してcookieに保存
-          cookies.encrypted[:guest_tokens] = guest_tokens.to_json
+          # トークンを書き込むメソッド（concernsのモジュール）
+          set_guest_token(@group.id, @group_membership.guest_token)
         end
       end
 
@@ -114,12 +110,8 @@ class GroupsController < ApplicationController
       if @group_membership.save
         # ゲストの場合、トークンを Cookie に保存
         if @group_membership.guest_token.present?
-          # 初回参加は空のハッシュ、cookieが残っていればcookieのハッシュ（JSON文字列からパース）
-          guest_tokens = cookies.encrypted[:guest_tokens] ? JSON.parse(cookies.encrypted[:guest_tokens]) : {}
-          # ハッシュに保存 → { "1" => "abc123..." }
-          guest_tokens[@group.id.to_s] = @group_membership.guest_token
-          # JSON文字列に変換してcookieに保存
-          cookies.encrypted[:guest_tokens] = guest_tokens.to_json
+          # トークンを書き込むメソッド（concernsのモジュール）
+          set_guest_token(@group.id, @group_membership.guest_token)
         end
         redirect_to group_path(@group.id), notice: "グループに参加しました"
       else
