@@ -4,6 +4,9 @@ class ApplicationController < ActionController::Base
   # フレンドリーフォアーディング
   before_action :store_user_location!, if: :storable_location?
 
+  # concernに書いたモジュールをinclude
+  include GuestAuthentication
+
   # ログイン後のリダイレクト先を設定（resouceを渡すとユーザーの属性で判別できる）
   # def after_sign_in_path_for(resource)
   #   store_location_for(:user, request.fullpath) || cards_path
