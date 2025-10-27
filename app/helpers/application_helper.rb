@@ -4,9 +4,7 @@ module ApplicationHelper
     case type.to_s
     when "notice"
       "bg-green-500"
-    when "alert"
-      "bg-red-500"
-    when "error"
+    when "alert", "error"
       "bg-red-500"
     else
       "bg-blue-500"
