@@ -39,6 +39,12 @@ class GroupMembership < ApplicationRecord
     self.guest_token ||= SecureRandom.urlsafe_base64(32)
   end
 
+  # ログインユーザーがグループのメンバーか確認
+  def self.user_member?(user, group)
+    exists?(user: user, group: group)
+  end
+
+
   private
 
   def must_have_user_or_guest_token
