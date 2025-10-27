@@ -19,12 +19,12 @@ class CardsController < ApplicationController
   end
 
   def create
-    @card = build_card
+    @card = Card.build_for(user: current_user_if_signed_in, attributes: card_params)
 
     if @card.save
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to redirect_path, notice: "カードが作成されました" }
+        format.html { redirect_to redirect_path_for(@card), notice: "カードが作成されました" }
       end
     else
       render :new, status: :unprocessable_entity
