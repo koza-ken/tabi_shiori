@@ -58,6 +58,16 @@ class Card < ApplicationRecord
     guest_group_ids.include?(group_id)
   end
 
+  # 引数にuserがあれば、accessible_by_user?でカードにアクセス可能か確認
+  #  userがなければ（ゲスト）、参加済みグループのidにカードのidが含まれるかを確認
+  def accessible?(user:, guest_group_ids:)
+    if user.present?
+      accessible_by_user?(user)
+    else
+      accessible_by_guest?(guest_group_ids)
+    end
+  end
+
   private
 
   def must_belong_to_user_or_group
