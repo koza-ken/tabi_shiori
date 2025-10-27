@@ -52,6 +52,11 @@ class Card < ApplicationRecord
     end
   end
 
+  # ゲストユーザーがカードにアクセス可能か
+  def accessible_by_guest?(guest_group_ids)
+    return false if group_id.blank?  # 個人カードは不可
+    guest_group_ids.include?(group_id)
+  end
 
   private
 
