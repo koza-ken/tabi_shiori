@@ -41,6 +41,17 @@ class Card < ApplicationRecord
     end
   end
 
+  # そのユーザーがカードにアクセス可能か
+  def accessible_by_user?(user)
+    if group_id.present?
+      # グループカード：グループメンバーのみ
+      user.member_of?(group)
+    else
+      # 個人カード：所有者のみ
+      user_id == user.id
+    end
+  end
+
 
   private
 
