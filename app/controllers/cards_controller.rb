@@ -61,9 +61,7 @@ class CardsController < ApplicationController
     unless user_signed_in?
       # ログインしていなくて、グループ所属もない場合のカード作成は、URL直接入力なので拒否
       if group_id.blank?
-        @card = Card.new
-        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください１")
-        render :new, status: :unprocessable_entity
+        render_guest_creation_error("カードを作成するにはログインするかグループに参加してください１")
         return
       end
 
@@ -71,10 +69,8 @@ class CardsController < ApplicationController
       stored_token = guest_token_for(group_id)
 
       # ログインしていなくて、tokenがないか、tokenが一致しない場合は権限なし
-      if stored_token.blank? || !GroupMembership.exists?(group_id: group_id, guest_token: stored_token)
-        @card = Card.new
-        @card.errors.add(:base, "カードを作成するにはログインするかグループに参加してください２")
-        render :new, status: :unprocessable_entity
+      unless GroupMembership.guest_member?(stored_token, group_id)
+        render_guest_creation_error("カードを作成するにはログインするかグループに参加してください２")
       end
     end
   end
