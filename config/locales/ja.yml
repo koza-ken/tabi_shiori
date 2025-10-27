@@ -1,0 +1,19 @@
+ja:
+  errors:
+    cards:
+      unauthorized_view: "このカードを閲覧する権限がありません"
+      guest_creation_not_allowed: "カードを作成するにはログインするかグループに参加してください"
+      guest_not_member: "カードを作成するにはログインするかグループに参加してください"
+    groups:
+      not_member: "このグループには参加していません"
+      invalid_link: "無効なリンクです"
+      invalid_operation: "無効な操作です"
+      user_not_found: "選択したユーザーが見つかりません"
+      token_mismatch: "トークンが一致しません"
+      membership_failed: "参加に失敗しました"
+  notices:
+    cards:
+      created: "カードが作成されました"
+    groups:
+      created: "グループが作成されました"
+      joined: "グループに参加しました"

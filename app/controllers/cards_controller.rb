@@ -24,7 +24,7 @@ class CardsController < ApplicationController
     if @card.save
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to redirect_path_for(@card), notice: "カードが作成されました" }
+        format.html { redirect_to redirect_path_for(@card), notice: t("notices.cards.created") }
       end
     else
       render :new, status: :unprocessable_entity
@@ -60,7 +60,7 @@ class CardsController < ApplicationController
     unless user_signed_in?
       # ログインしていなくて、グループ所属もない場合のカード作成は、URL直接入力なので拒否
       if group_id.blank?
-        render_guest_creation_error("カードを作成するにはログインするかグループに参加してください１")
+        render_guest_creation_error(t("errors.cards.guest_creation_not_allowed"))
         return
       end
 
@@ -69,7 +69,7 @@ class CardsController < ApplicationController
 
       # ログインしていなくて、tokenがないか、tokenが一致しない場合は権限なし
       unless GroupMembership.guest_member?(stored_token, group_id)
-        render_guest_creation_error("カードを作成するにはログインするかグループに参加してください２")
+        render_guest_creation_error(t("errors.cards.guest_not_member"))
       end
     end
   end
@@ -80,7 +80,7 @@ class CardsController < ApplicationController
 
     unless authorized
       redirect_to (user_signed_in? ? cards_path : root_path),
-                  alert: "このカードを閲覧する権限がありません"
+                  alert: t("errors.cards.unauthorized_view")
     end
   end
 

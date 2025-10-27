@@ -25,7 +25,7 @@ class GroupsController < ApplicationController
       @group = @form.group  # フォームオブジェクトから作成されたグループを取得
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to groups_path, notice: "グループが作成されました" }
+        format.html { redirect_to groups_path, notice: t("notices.groups.created") }
       end
     else
       render :new, status: :unprocessable_entity
@@ -50,7 +50,7 @@ class GroupsController < ApplicationController
     when "text_input"
       handle_text_input_membership
     else
-      redirect_to new_membership_path(@group.invite_token), alert: "無効な操作です"
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.invalid_operation")
     end
   end
 
@@ -74,7 +74,7 @@ class GroupsController < ApplicationController
     end
 
     unless authorized
-      redirect_to (user_signed_in? ? groups_path : root_path), alert: "このグループには参加していません"
+      redirect_to (user_signed_in? ? groups_path : root_path), alert: t("errors.groups.not_member")
     end
   end
 
@@ -90,7 +90,7 @@ class GroupsController < ApplicationController
   # @groupがなければroot_pathに（new_membership、create_membershipアクションのフィルター）
   def ensure_group_present!
     return if @group.present?
-    redirect_to root_path, notice: "無効なリンクです"
+    redirect_to root_path, notice: t("errors.groups.invalid_link")
   end
 
   # ログインしていて、かつ、そのユーザーがそのグループに参加しているか（new_membershipアクション）
@@ -108,24 +108,24 @@ class GroupsController < ApplicationController
     membership = @group.group_memberships.find_by(group_nickname: membership_params[:group_nickname])
     # 選択したニックネームからメンバーシップをさがす
     unless membership
-      redirect_to new_membership_path(@group.invite_token), alert: "選択したユーザーが見つかりません"
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.user_not_found")
       return
     end
 
     # 見つかったメンバーシップに、user_idかトークンを紐づける
     unless attach_user_or_guest_token(membership)
-      redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.membership_failed")
       return
     end
 
     # ゲスト参加で、トークンが一致しない場合
     if membership.user_id.nil? && !guest_token_matches?(membership)
-      redirect_to new_membership_path(@group.invite_token), alert: "トークンが一致しません"
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.token_mismatch")
       return
     end
 
     # 問題なければグループに参加する
-    redirect_to group_path(@group.id), notice: "グループに参加しました"
+    redirect_to group_path(@group.id), notice: t("notices.groups.joined")
   end
 
   # ニックネームの入力からのグループ参加の処理をまとめたメソッド（create_membershipアクション）
@@ -139,9 +139,9 @@ class GroupsController < ApplicationController
 
     if membership.save
       set_guest_token(@group.id, membership.guest_token) if membership.guest_token.present?
-      redirect_to group_path(@group.id), notice: "グループに参加しました"
+      redirect_to group_path(@group.id), notice: t("notices.groups.joined")
     else
-      redirect_to new_membership_path(@group.invite_token), alert: "参加に失敗しました"
+      redirect_to new_membership_path(@group.invite_token), alert: t("errors.groups.membership_failed")
     end
   end
 
