@@ -33,4 +33,9 @@ class User < ApplicationRecord
   validates :display_name, length: { maximum: 20 }, allow_blank: true
   validates :provider, presence: true, if: -> { uid.present? }, length: { maximum: 64 }, allow_blank: true
   validates :uid, presence: true, if: -> { provider.present? }
+
+  # ユーザーが特定のグループのメンバーかどうかを確認
+  def member_of?(group)
+    group_memberships.exists?(group: group)
+  end
 end
