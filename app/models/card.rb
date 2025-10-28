@@ -21,6 +21,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Card < ApplicationRecord
+  has_many :spots, dependent: :destroy
   belongs_to :user, optional: true
   belongs_to :group, optional: true
   validates :name, presence: true, length: { maximum: 50 }

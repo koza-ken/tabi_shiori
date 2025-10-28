@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_16_051953) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_28_023230) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,19 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_16_051953) do
     t.index ["start_date"], name: "index_groups_on_start_date"
   end
 
+  create_table "spots", force: :cascade do |t|
+    t.bigint "card_id", null: false
+    t.string "name", limit: 50, null: false
+    t.text "address"
+    t.string "phone_number", limit: 20
+    t.text "website_url"
+    t.string "google_place_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_spots_on_card_id"
+    t.index ["google_place_id"], name: "index_spots_on_google_place_id", unique: true, where: "(google_place_id IS NOT NULL)"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "display_name", limit: 20
     t.string "email", default: "", null: false
@@ -77,4 +90,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_16_051953) do
   add_foreign_key "group_memberships", "groups"
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users", column: "created_by_user_id"
+  add_foreign_key "spots", "cards"
 end
