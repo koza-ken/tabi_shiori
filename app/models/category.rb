@@ -13,4 +13,8 @@
 #  index_categories_on_display_order  (display_order) UNIQUE
 #
 class Category < ApplicationRecord
+  # そのカテゴリのスポットがある場合、カテゴリの削除時にエラー
+  has_many :spots, dependent: :restrict_with_error
+  validates :name, presence: true, length: { maximum: 20 }
+  validates :display_order, presence: true, uniqueness: true
 end
