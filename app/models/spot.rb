@@ -27,9 +27,8 @@
 class Spot < ApplicationRecord
   belongs_to :card
   belongs_to :category
-  
+
   validates :name, presence: true, length: { maximum: 50 }
   validates :phone_number, length: { maximum: 20 }, allow_blank: true
   validates :google_place_id, uniqueness: true, allow_nil: true
-  validates :category_id, presence: true
 end
