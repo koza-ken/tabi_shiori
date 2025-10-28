@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_28_023230) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_28_033551) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_28_023230) do
     t.index ["group_id"], name: "index_cards_on_group_id"
     t.index ["user_id"], name: "index_cards_on_user_id"
     t.check_constraint "user_id IS NOT NULL AND group_id IS NULL OR user_id IS NULL AND group_id IS NOT NULL", name: "cards_must_belong_to_user_or_group"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name", limit: 20, null: false
+    t.integer "display_order", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["display_order"], name: "index_categories_on_display_order", unique: true
   end
 
   create_table "group_memberships", force: :cascade do |t|
