@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_28_033551) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_28_040940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,7 +73,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_28_033551) do
     t.string "google_place_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "category_id", null: false
     t.index ["card_id"], name: "index_spots_on_card_id"
+    t.index ["category_id"], name: "index_spots_on_category_id"
     t.index ["google_place_id"], name: "index_spots_on_google_place_id", unique: true, where: "(google_place_id IS NOT NULL)"
   end
 
@@ -99,4 +101,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_28_033551) do
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users", column: "created_by_user_id"
   add_foreign_key "spots", "cards"
+  add_foreign_key "spots", "categories"
 end
