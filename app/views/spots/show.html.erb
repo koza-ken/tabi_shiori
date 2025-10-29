@@ -21,9 +21,7 @@
         <div class="mb-6">
           <label class="block text-sm font-medium text-text mb-2"><%= t('spots.form.website_url') %></label>
           <div class="form-text-field bg-gray-100 cursor-not-allowed">
-            <% if @spot.website_url.present? %>
-              <%= link_to @spot.website_url, @spot.website_url, target: "_blank", class: "text-blue-500 hover:underline" %>
-            <% end %>
+            <%= @spot.website_url %>
           </div>
         </div>
 
