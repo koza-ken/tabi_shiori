@@ -1,6 +1,6 @@
 class SpotsController < ApplicationController
   before_action :authenticate_user!, only: [ :show, :new, :create, :edit ]
-  before_action :set_card, only: [ :new, :create, :edit, :update ,:destroy ]
+  before_action :set_card, only: [ :new, :create, :edit, :update, :destroy ]
   before_action :set_spot, only: [ :show, :edit, :update, :destroy ]
   before_action :check_show_spot, only: [ :show, :new, :create, :edit, :update, :destroy ]
 
@@ -33,7 +33,7 @@ class SpotsController < ApplicationController
       # TODO 更新成功のフラッシュメッセージが正しく表示されない
       redirect_to card_spot_path(@card, @spot), notice: t("notices.spots.updated")
     else
-      render :edit, status: :unprocessable_entity, alert:"更新に失敗しました"
+      render :edit, status: :unprocessable_entity, alert: "更新に失敗しました"
     end
   end
 
@@ -74,5 +74,4 @@ class SpotsController < ApplicationController
       redirect_to cards_path, alert: t("errors.spots.unauthorized_view")
     end
   end
-
 end
