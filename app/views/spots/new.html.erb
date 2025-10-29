@@ -1,0 +1,74 @@
+<turbo-frame id="spot-create-modal">
+  <!-- モーダルのラッパー -->
+  <div role="dialog" tabindex="-1" class="fixed inset-0 z-60 flex items-center justify-center w-full h-screen p-2">
+    <!-- 背景（クリックでモーダルを閉じる） -->
+    <div data-action="click->modal#close" class="fixed inset-0 block w-full h-screen cursor-pointer bg-gray-900/30"></div>
+    <div class="relative z-20 w-full max-w-2xl max-h-screen overflow-y-auto bg-bg rounded-md">
+      <main class="flex flex-col items-center justify-center px-8 py-12">
+        <h1 class="text-2xl font-bold text-primary mb-8"><%= t('spots.new.title') %></h1>
+
+        <%= form_with model: @spot, url: card_spots_path(@card), class: "w-full max-w-md" do |f| %>
+          <!-- エラーメッセージ表示 -->
+          <% if @spot.errors.any? %>
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h2 class="text-sm font-semibold text-red-800 mb-2">
+                <%= t('errors.messages.not_saved', count: @spot.errors.count, resource: t('activerecord.models.spot')) %>
+              </h2>
+              <ul class="list-disc list-inside text-sm text-red-700">
+                <% @card.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!--- スポット名 -->
+          <div class="mb-6">
+            <%= f.label :name, t('spots.form.name'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :name,
+                placeholder: t('spots.form.name_placeholder'),
+                class: "form-text-field" %>
+          </div>
+
+          <!-- カテゴリ -->
+          <div class="mb-6">
+            <%= f.label :category, t('spots.form.category'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.collection_select :category_id, @categories, :id, :name,
+                {include_blank: "--- 選択してください ---"},
+                {class: "form-text-field"} %>
+          </div>
+
+          <!-- 住所 -->
+          <div class="mb-6">
+            <%= f.label :address, t('spots.form.address'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :address,
+                placeholder: t('spots.form.address_placeholder'),
+                class: "form-text-field resize-vertical" %>
+          </div>
+
+          <!-- URL -->
+          <div class="mb-6">
+            <%= f.label :website_url, t('spots.form.website_url'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :website_url,
+                placeholder: t('spots.form.web_site_url_placeholder'),
+                class: "form-text-field resize-vertical" %>
+          </div>
+
+          <!-- 電話番号--->
+          <div class="mb-6">
+            <%= f.label :phone_number, t('spots.form.phone_number'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :phone_number,
+                placeholder: t('spots.form.phone_number_placeholder'),
+                class: "form-text-field resize-vertical" %>
+          </div>
+
+          <!-- ボタン -->
+          <div class="flex gap-3">
+            <%= f.submit t('cards.form.submit'), class: "btn-main flex-1" %>
+            <%= link_to t('cards.form.cancel'), card_path(@card), class: "btn-sub flex-1 text-center" %>
+          </div>
+        <% end %>
+      </main>
+    </div>
+  </div>
+</turbo-frame>

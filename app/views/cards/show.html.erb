@@ -1,6 +1,17 @@
+<%= turbo_frame_tag "spot-create-modal", data: { controller: "modal" } %>
+
 <div class="relative z-20 w-full max-w-2xl max-h-screen overflow-y-auto bg-bg rounded-md">
   <main class="flex flex-col justify-center px-8 py-12 bg-main-bg">
-    <h1 class="text-2xl font-bold text-primary mb-8"><%= @card.name %></h1>
+    <div class="flex justify-between h-auto mb-6" data-controller="modal">
+      <h1 class="text-2xl font-bold text-primary"><%= @card.name %></h1>
+      <%= link_to new_card_spot_path(@card), data: {turbo_frame: "spot-create-modal", action: "click->modal#setGroupId"}, class: "btn-main text-sm px-4 py-2 w-auto" do %>
+        スポット追加
+      <% end %>
+    </div>
+    <div class="mb-4">
+      <%= render "spots/spots", spots: @card.spots, categories: @categories %>
+    </div>
+
     <div class="">
       <%= form_with model: @card, class: "w-full max-w-md" do |f| %>
         <%= f.label :memo, "メモ", class: "block text-2xl font-bold text-primary mb-2" %>

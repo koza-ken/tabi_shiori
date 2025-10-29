@@ -11,9 +11,42 @@ ja:
       user_not_found: "選択したユーザーが見つかりません"
       token_mismatch: "トークンが一致しません"
       membership_failed: "参加に失敗しました"
+    spots:
+      unauthorized_view: "このスポットにアクセスする権限がありません"
+      unauthorized_create: "このカードにスポットを追加する権限がありません"
   notices:
     cards:
       created: "カードが作成されました"
     groups:
       created: "グループが作成されました"
       joined: "グループに参加しました"
+    spots:
+      created: "スポットを追加しました"
+      updated: "スポットを更新しました"
+      destroyed: "スポットを削除しました"
+  spots:
+    form:
+      name: "スポット名"
+      name_placeholder: "例：〇〇レストラン"
+      category: "カテゴリ"
+      address: "住所"
+      address_placeholder: "例：東京都渋谷区..."
+      website_url: "Webサイト"
+      web_site_url_placeholder: "例：https://example.com"
+      phone_number: "電話番号"
+      phone_number_placeholder: "例：03-1234-5678"
+      update: "更新"
+    edit:
+      title: "スポット編集"
+  cards:
+    form:
+      submit: "保存"
+      cancel: "キャンセル"
+      edit: "編集"
+      delete: "削除"
+      confirm_delete: "削除してもよろしいですか？"
+      back: "戻る"
+  views:
+    spots:
+      new:
+        title: "スポットを追加"

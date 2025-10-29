@@ -1,0 +1,4 @@
+<!-- スポット追加時に挿入される要素 -->
+<div id="<%= dom_id(spot) %>" class="mb-2">
+  <%= link_to spot.name, card_spot_path(@card, spot), class: "underline hover:opacity-70" %>
+</div>

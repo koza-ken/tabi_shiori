@@ -1,0 +1,43 @@
+<turbo-frame id="spot-edit-modal">
+  <div class="relative z-20 w-full max-w-2xl max-h-screen overflow-y-auto bg-bg rounded-md">
+    <main class="flex flex-col justify-center px-8 py-12 bg-main-bg">
+      <h1 class="text-2xl font-bold text-primary mb-8"><%= @spot.name %></h1>
+
+      <div class="w-full max-w-md">
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-text mb-2"><%= t('spots.form.category') %></label>
+          <div class="form-text-field bg-gray-100 cursor-not-allowed">
+            <%= @spot.category&.name || "---" %>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-text mb-2"><%= t('spots.form.address') %></label>
+          <div class="form-text-field bg-gray-100 cursor-not-allowed">
+            <%= @spot.address %>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-text mb-2"><%= t('spots.form.website_url') %></label>
+          <div class="form-text-field bg-gray-100 cursor-not-allowed">
+            <%= @spot.website_url %>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-text mb-2"><%= t('spots.form.phone_number') %></label>
+          <div class="form-text-field bg-gray-100 cursor-not-allowed">
+            <%= @spot.phone_number %>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-8">
+        <%= link_to t('cards.form.edit'), edit_card_spot_path(@card, @spot), data: {turbo_frame: "spot-edit-modal"}, class: "btn-main flex-1 text-center" %>
+        <%= link_to t('cards.form.delete'), card_spot_path(@card, @spot), method: :delete, data: { turbo_method: :delete, turbo_confirm: t('cards.form.confirm_delete'), disable_with: t('cards.form.delete'), turbo_frame: "_top" }, class: "btn-sub flex-1 text-center" %>
+        <%= link_to t('cards.form.back'), card_path(@card), data: {turbo_frame: "_top"}, class: "btn-sub flex-1 text-center" %>
+      </div>
+    </main>
+  </div>
+</turbo_frame>
