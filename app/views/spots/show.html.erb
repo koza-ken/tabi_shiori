@@ -37,7 +37,7 @@
 
       <div class="flex gap-3 mt-8">
         <%= link_to t('cards.form.edit'), edit_card_spot_path(@card, @spot), data: {turbo_frame: "spot-edit-modal"}, class: "btn-main flex-1 text-center" %>
-        <%= link_to t('cards.form.delete'), card_spot_path(@card, @spot), method: :delete, data: { confirm: t('cards.form.confirm_delete') }, class: "btn-sub flex-1 text-center" %>
+        <%= link_to t('cards.form.delete'), card_spot_path(@card, @spot), method: :delete, data: { turbo_method: :delete, turbo_confirm: t('cards.form.confirm_delete'), disable_with: t('cards.form.delete'), turbo_frame: "_top" }, class: "btn-sub flex-1 text-center" %>
         <%= link_to t('cards.form.back'), card_path(@card), data: {turbo_frame: "_top"}, class: "btn-sub flex-1 text-center" %>
       </div>
     </main>
