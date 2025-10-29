@@ -1,0 +1,38 @@
+<div class="relative z-20 w-full max-w-2xl max-h-screen overflow-y-auto bg-bg rounded-md">
+  <main class="flex flex-col justify-center px-8 py-12 bg-main-bg">
+    <div class="flex items-center gap-3 mb-8">
+      <h1 class="text-2xl font-bold text-primary"><%= @spot.name %></h1>
+      <% if @spot.category %>
+        <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-primary text-white">
+          <%= @spot.category.name %>
+        </span>
+      <% end %>
+    </div>
+
+    <div class="mb-6 space-y-4 w-full max-w-md">
+
+      <div>
+        <p class="text-sm font-medium text-text mb-1"><%= t('spots.form.address') %></p>
+        <p class="text-base text-text"><%= @spot.address %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-text mb-1"><%= t('spots.form.phone_number') %></p>
+        <p class="text-base text-text"><%= @spot.phone_number %></p>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium text-text mb-1"><%= t('spots.form.website_url') %></p>
+        <% if @spot.website_url.present? %>
+          <%= link_to @spot.website_url, @spot.website_url, target: "_blank", class: "text-blue-500 hover:underline" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-8">
+      <%= link_to t('cards.form.edit'), edit_card_spot_path(@card, @spot), class: "btn-main flex-1 text-center" %>
+      <%= link_to t('cards.form.delete'), card_spot_path(@card, @spot), method: :delete, data: { confirm: t('cards.form.confirm_delete') }, class: "btn-sub flex-1 text-center" %>
+      <%= link_to t('cards.form.back'), card_path(@card), class: "btn-sub flex-1 text-center" %>
+    </div>
+  </main>
+</div>
