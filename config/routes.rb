@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   devise_for :users
   root "static_pages#home"
 
-  resources :cards, only: %i[index show new create]
+  resources :cards, only: %i[index show new create] do
+    resources :spots, only: %i[show new create edit update destroy]
+  end
   resources :groups, only: %i[index show new create]
 
   # 招待リンクからの参加
