@@ -38,6 +38,8 @@ class SpotsController < ApplicationController
   end
 
   def destroy
+    @spot.destroy!
+    redirect_to card_path(@card), notice: t("notices.spots.destroyed")
   end
 
   private
