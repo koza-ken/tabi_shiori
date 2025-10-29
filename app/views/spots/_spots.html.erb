@@ -1,0 +1,18 @@
+<div>
+  <% categories.each do |category| %>
+    <div class="mb-4">
+      <div class="text-lg font-bold text-primary">
+        <%= category.name %>
+      </div>
+      <div class="ml-5 mb-2" id="category_<%= category.id %>_spots">
+        <% spots.each do |spot| %>
+          <% if spot.category_id == category.id %>
+            <%= render "spots/spot", spot: spot %>
+          <% end %>
+        <% end %>
+      </div>
+      <hr class="border-t border-gray-300 mt-4" />
+    </div>
+  <% end %>
+
+</div>
