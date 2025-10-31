@@ -25,9 +25,12 @@
           <!--- スポット名 -->
           <div class="mb-6">
             <%= f.label :name, t('spots.form.name'), class: "block text-sm font-medium text-text mb-2" %>
-            <%= f.text_field :name,
-                placeholder: t('spots.form.name_placeholder'),
-                class: "form-text-field" %>
+            <gmp-place-autocomplete
+              id="spot-auto-input"
+              data-autocomplete-target="autocomplete"
+              country="jp"
+              class="form-text-field p-0">
+            </gmp-place-autocomplete>
           </div>
 
           <!-- カテゴリ -->
