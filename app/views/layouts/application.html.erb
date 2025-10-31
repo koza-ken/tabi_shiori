@@ -16,6 +16,11 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+    <%# Google Maps API - ページ全体で1回だけ読み込む（個別のページに書くと重複してコンソールに警告がでる） %>
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAPS_API_KEY %>&libraries=places&loading=async">
+    </script>
   </head>
 
   <body data-controller="hamburger">
