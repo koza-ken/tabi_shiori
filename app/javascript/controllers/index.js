@@ -12,3 +12,6 @@ application.register("clipboard", ClipboardController);
 
 import FlashController from "./flash_controller";
 application.register("flash", FlashController);
+
+import AutocompleteController from "./autocomplete_controller";
+application.register("autocomplete", AutocompleteController);
