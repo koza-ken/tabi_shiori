@@ -14,6 +14,8 @@ ja:
     spots:
       unauthorized_view: "このスポットにアクセスする権限がありません"
       unauthorized_create: "このカードにスポットを追加する権限がありません"
+      guest_creation_not_allowed: "スポットを追加するにはログインするかグループに参加してください"
+      guest_not_member: "スポットを追加するにはログインするかグループに参加してください"
   notices:
     cards:
       created: "カードが作成されました"
