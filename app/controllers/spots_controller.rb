@@ -1,5 +1,4 @@
 class SpotsController < ApplicationController
-  before_action :authenticate_user!, only: [ :show, :new, :create, :edit ]
   before_action :set_card, only: [ :new, :create, :edit, :update, :destroy ]
   before_action :set_spot, only: [ :show, :edit, :update, :destroy ]
   before_action :check_show_spot, only: [ :show, :new, :create, :edit, :update, :destroy ]
