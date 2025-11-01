@@ -20,6 +20,7 @@ class SpotsController < ApplicationController
         format.html { redirect_to card_path(@card), notice: t("notices.spots.created") }
       end
     else
+      @categories = Category.all.order(:display_order)
       render :new, status: :unprocessable_entity
     end
   end
@@ -33,6 +34,7 @@ class SpotsController < ApplicationController
       # TODO 更新成功のフラッシュメッセージが正しく表示されない
       redirect_to card_spot_path(@card, @spot), notice: t("notices.spots.updated")
     else
+      @categories = Category.all.order(:display_order)
       render :edit, status: :unprocessable_entity, alert: "更新に失敗しました"
     end
   end
