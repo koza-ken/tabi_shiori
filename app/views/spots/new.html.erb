@@ -25,13 +25,21 @@
           <!--- スポット名 -->
           <div class="mb-6">
             <%= f.label :name, t('spots.form.name'), class: "block text-sm font-medium text-text mb-2" %>
+            <%= f.text_field :name,
+                data: { autocomplete_target: "nameField" },
+                placeholder: t('spots.form.name_placeholder'),
+                class: "form-text-field" %>
+
+            <!-- オートコンプリートは補助として表示 -->
+            <div class="mt-2 text-xs text-gray-600">
+              または下から施設を検索して選択：
+            </div>
             <gmp-place-autocomplete
               id="spot-auto-input"
               data-autocomplete-target="autocomplete"
               country="jp"
-              class="form-text-field p-0">
+              class="form-text-field p-0 mt-1">
             </gmp-place-autocomplete>
-            <%= f.hidden_field :name, data: { autocomplete_target: "nameField" } %>
           </div>
 
           <!-- カテゴリ -->
