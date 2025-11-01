@@ -52,3 +52,24 @@ ja:
     spots:
       new:
         title: "スポットを追加"
+  activerecord:
+    models:
+      spot: "スポット"
+      card: "カード"
+      category: "カテゴリ"
+    attributes:
+      spot:
+        name: "スポット名"
+        address: "住所"
+        phone_number: "電話番号"
+        website_url: "Webサイト"
+        category_id: "カテゴリ"
+        google_place_id: "施設"
+    errors:
+      models:
+        spot:
+          attributes:
+            google_place_id:
+              taken: "この施設は既にこのカードに登録されています"
+            name:
+              blank: "スポット名を入力してください"
