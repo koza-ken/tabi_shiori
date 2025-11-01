@@ -15,7 +15,7 @@
                 <%= t('errors.messages.not_saved', count: @spot.errors.count, resource: t('activerecord.models.spot')) %>
               </h2>
               <ul class="list-disc list-inside text-sm text-red-700">
-                <% @card.errors.full_messages.each do |message| %>
+                <% @spot.errors.full_messages.each do |message| %>
                   <li><%= message %></li>
                 <% end %>
               </ul>
