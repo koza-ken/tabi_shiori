@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["autocomplete", "nameField", "addressField", "websiteField", "phoneField"]
+  static targets = ["autocomplete", "nameField", "addressField", "websiteField", "phoneField", "idField"]
 
   // コントローラがHTMLに接続されたときに実行
   connect() {
@@ -31,7 +31,7 @@ export default class extends Controller {
 
       // place_id を使って詳細情報を取得
       await place.fetchFields({
-        fields: ['displayName', 'formattedAddress', 'internationalPhoneNumber', 'websiteURI']
+        fields: ['displayName', 'formattedAddress', 'internationalPhoneNumber', 'websiteURI', 'id']
       })
 
       // 取得したデータを加工
@@ -39,12 +39,14 @@ export default class extends Controller {
       const address = this.formatAddress(place.formattedAddress || '')
       const phone = this.formatPhoneNumber(place.internationalPhoneNumber || '')
       const website = place.websiteURI || ''
+      const google_place_id = place.id || '';
 
       // フォームに自動入力
       this.nameFieldTarget.value = name
       this.addressFieldTarget.value = address
       this.phoneFieldTarget.value = phone
       this.websiteFieldTarget.value = website
+      this.idFieldTarget.value = google_place_id
 
       // オートコンプリート入力欄を施設名に更新
       const inputElement = autocompleteElement.querySelector('input')
