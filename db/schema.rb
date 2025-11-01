@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_28_040940) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_01_085546) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -74,9 +74,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_28_040940) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id", null: false
+    t.index ["card_id", "google_place_id"], name: "index_spots_on_card_id_and_google_place_id", unique: true, where: "(google_place_id IS NOT NULL)"
     t.index ["card_id"], name: "index_spots_on_card_id"
     t.index ["category_id"], name: "index_spots_on_category_id"
-    t.index ["google_place_id"], name: "index_spots_on_google_place_id", unique: true, where: "(google_place_id IS NOT NULL)"
   end
 
   create_table "users", force: :cascade do |t|
