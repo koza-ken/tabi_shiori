@@ -47,7 +47,7 @@ class SpotsController < ApplicationController
   private
 
   def spot_params
-    params.require(:spot).permit(:name, :address, :phone_number, :website_url, :category_id)
+    params.require(:spot).permit(:name, :address, :phone_number, :website_url, :category_id, :google_place_id)
   end
 
   def set_card
